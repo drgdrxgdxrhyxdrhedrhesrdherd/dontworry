@@ -1373,14 +1373,8 @@ run.RenderStepped:Connect(function()
                   ff.Parent = MYCHAR
                   ff.Visible = false
             end
-      elseif functions.nofalldamageF == false then
-            local MYCHAR = me.Character
-            if MYCHAR then
-                  local ff = MYCHAR:FindFirstChildOfClass("ForceField")
-                  if ff then
-                        ff:Destroy()
-                  end
-            end
+      else
+            me.Character:FindFirstChildOfClass("ForceField"):Destroy()
       end
       if functions.instant_reloadF == true then
             local gunR_remote = game:GetService("ReplicatedStorage").Events.GNX_R
