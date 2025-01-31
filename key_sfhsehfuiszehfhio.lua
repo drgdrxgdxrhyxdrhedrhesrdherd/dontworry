@@ -13,7 +13,7 @@ local KEYS = {
 }
 
 local GUI = Instance.new("ScreenGui")
-GUI.Parent = game.Players.LocalPlayer.PlayerGui
+local s, a = pcall(function() GUI.Parent = game.CoreGui end) if not s then GUI.Parent = game.Players.LocalPlayer.PlayerGui end
 GUI.Name = "Loader"
 GUI.ResetOnSpawn = false
 
@@ -204,7 +204,7 @@ GETKEYBUTTON.Parent = MENU
 GETKEYBUTTON.Name = "GetKey"
 GETKEYBUTTON.BackgroundColor3 = Color3.new(1, 1, 1)
 GETKEYBUTTON.Position = UDim2.new(0.231, 0, 0.681, 0)
-GETKEYBUTTON.Size = UDim2.new(0, 204, 0, 30)
+GETKEYBUTTON.Size = UDim2.new(0.452, 0, 0.112, 0)
 GETKEYBUTTON.Font = Enum.Font.RobotoMono
 GETKEYBUTTON.TextColor3 = Color3.new(0, 0, 0)
 GETKEYBUTTON.TextScaled = true
@@ -228,7 +228,7 @@ CHECKBUTTON.Parent = MENU
 CHECKBUTTON.Name = "check"
 CHECKBUTTON.BackgroundColor3 = Color3.new(1, 1, 1)
 CHECKBUTTON.Position = UDim2.new(0.697, 0, 0.681, 0)
-CHECKBUTTON.Size = UDim2.new(0, 30, 0, 30)
+CHECKBUTTON.Size = UDim2.new(0.067, 0, 0.112, 0)
 CHECKBUTTON.Image = "rbxassetid://76645474804869"
 CHECKBUTTON.ImageColor3 = Color3.new(0, 0, 0)
 CHECKBUTTON.Visible = true
