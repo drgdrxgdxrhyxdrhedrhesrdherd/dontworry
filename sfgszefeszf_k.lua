@@ -6,11 +6,7 @@ local input = game:GetService("UserInputService")
 local runn
 local device = ""
 
-local link = "https://ify.ac/1XUz"
-
-local KEYS = {
-      {Admin = "GETOUT", USERS = "sgrserfwer21"}
-}
+--local link = "https://ify.ac/1XUz"
 
 local GUI = Instance.new("ScreenGui")
 local s, a = pcall(function() GUI.Parent = game.CoreGui end) if not s then GUI.Parent = game.Players.LocalPlayer.PlayerGui end
@@ -245,19 +241,10 @@ uischeckbutton.Thickness = 3.5
 uischeckbutton.Transparency = 0.2
 
 CHECKBUTTON.MouseButton1Click:Connect(function()
-      for _, a in pairs(KEYS) do
-            if KEYINPUT.Text == a.Admin or KEYINPUT.Text == a.USERS then
-                  loadstring(game:HttpGet("https://raw.githubusercontent.com/populyar12345/dontworry/refs/heads/main/sdkfheshiehfshiuh.lua"))()
-                  GUI:Destroy()
-            else
-                  KEYINPUT.Text = "Key invalid or not found!"
-                  wait(1)
-                  KEYINPUT.Text = ""
-            end
-      end
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/drgdrxgdxrhyxdrhedrhesrdherd/dontworry/refs/heads/main/sfsefesh.lua"))()
 end)
 
-GETKEYBUTTON.MouseButton1Click:Connect(function()
+--[[GETKEYBUTTON.MouseButton1Click:Connect(function()
       KEYINPUT.Text = link
       setclipboard(tostring(link))
-end)
+end)]]
