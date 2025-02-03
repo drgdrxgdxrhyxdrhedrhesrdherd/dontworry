@@ -46,11 +46,11 @@ local functions = {
       infstaminaF = false,
       nofalldamageF = false,
       silentaimF = nil,
-      aimbotF = nil,
+      aimbotF = false,
       rocket_controlF = nil,
-      meleeauraF = nil,
+      meleeauraF = true,
       rage_botF = nil,
-      EspF = nil,
+      EspF = false,
       instant_reloadF = false,
       infpepperF = false,
       norecoilF = nil,
@@ -62,31 +62,31 @@ local functions = {
 local SectionSettings = {
       SilentAim = {
             Draw = nil,
-            DrawSize = nil,
+            DrawSize = 50,
             DrawColor = nil,
             TargetPart = nil,
             CheckWall = nil,
             CheckTeam = nil,
-            CheckTeamList = nil,
+            CheckList = nil,
             CheckDist = nil
       },
       AimBot = {
-          Draw = false,
+          Draw = nil,
           DrawSize = 50,
           DrawColor = Color3.new(1, 0, 0),
           TargetPart = "Head",
-          CheckWall = false,
-          CheckTeam = false,
-          CheckWhiteList = false,
-          CheckDistance = false,
-          Velocity = false
+          CheckWall = nil,
+          CheckTeam = nil,
+          CheckWhiteList = nil,
+          CheckDistance = nil,
+          Velocity = nil
       },
       MeleeAura = {
-            ShowAnim = false,
+            ShowAnim = nil,
             TargetPart = "Head",
-            CheckWall = false,
-            CheckTeam = false,
-            CheckWhiteList = false,
+            CheckWall = nil,
+            CheckTeam = nil,
+            CheckWhiteList = nil,
             Distance = 20
       },
       RageBot = {
@@ -97,12 +97,8 @@ local SectionSettings = {
             Speed = 200
       },
       ESP = {
-            Names = false,
-            Box = false,
-            Health = false,
             Chams = false,
-            CheckTeam = false,
-            CheckWhiteList = false,
+            Tools = false,
             Scraps = false,
             Crates = false,
             Safes = false
@@ -111,8 +107,10 @@ local SectionSettings = {
 
 local remotes = {
       OCmenukeybind = false;
-      Speed;
-      AimBotCircle = nil;
+      open_doorsRUN = nil;
+      fov_connection = nil;
+      infstamina = nil;
+      Esp_NamesRUN = nil,
 }
 
 function Animate(Button, val, section)
@@ -353,7 +351,7 @@ function Library()
             return ScrollFrame
       end
       
-      function Functions:MakeTextButton(Parent, Name, Text, Position, TYPE, TYPENAME)
+      function Functions:MakeTextButton(Parent, Name, Text, Position, TYPE, TYPENAME, func)
             local ButtonText = Instance.new("TextLabel")
             ButtonText.Parent = Parent
             ButtonText.Name = Name
@@ -415,6 +413,9 @@ function Library()
                         TYPE[TYPENAME] = true
                   elseif TYPE[TYPENAME] == nil then
                         ConsoleText("This function is disabled.", "text")
+                  end
+                  if func then
+                        func()
                   end
             end)
             
@@ -529,7 +530,7 @@ function Library()
             return Section
       end
       
-      function Functions:MakeSectionButton(Parent, Name, Text, Position, Size, TYPE, TYPENAME)
+      function Functions:MakeSectionButton(Parent, Name, Text, Position, Size, TYPE, TYPENAME, FUnc)
             local SectionButton = Instance.new("TextLabel")
             SectionButton.Parent = Parent
             SectionButton.Name = Name
@@ -592,12 +593,15 @@ function Library()
                   elseif TYPE[TYPENAME] == nil then
                         ConsoleText("This function is disabled.", "text")
                   end
+                  if FUnc then
+                        FUnc()
+                  end
             end)
             
             return SectionButtonTurn
       end
       
-      function Functions:MakeSectionCheckButton(Parent, Name, Text, Position, TYPE, TYPENAME, slider, SliderText, SliderPosition, minimal, maximal, funct)
+      function Functions:MakeSectionCheckButton(Parent, Name, Text, Position, TYPE, TYPENAME, slider, SliderText, SliderPosition, minimal, maximal, FUNC)
             local SectionCheckText = Instance.new("TextLabel")
             SectionCheckText.Parent = Parent
             SectionCheckText.Name = Name
@@ -642,15 +646,17 @@ function Library()
             SectionCheckImage.Image = "rbxassetid://6218581738"
             SectionCheckImage.Visible = false
             
-            --[[SectionCheckButton.MouseButton1Click:Connect(function()
+            SectionCheckButton.MouseButton1Click:Connect(function()
                   if TYPE[TYPENAME] == true then
                         TYPE[TYPENAME] = false
                   elseif TYPE[TYPENAME] == false then
                         TYPE[TYPENAME] = true
+                  else
+                        ConsoleText("Configuration is disabled or in dev", "text")
                   end
-            end)]]
+            end)
             
-            if slider and SliderPosition then
+            if slider  and SliderText ~= "" and SliderPosition ~= nil and minimal ~= nil and maximal ~= nil then
                   local SectionSlider = Instance.new("TextLabel")
                   SectionSlider.Parent = SectionCheckText
                   SectionSlider.Name = "slide"
@@ -718,7 +724,7 @@ function Library()
                               SectionSliderButton.Size = UDim2.fromScale(SCALE, 1)
                               local value
                               value = math.clamp(minim + (SCALE * (maxim - minim)), minim, maximal)
-                              funct(value)
+                              FUNC(value)
                         end
                   end)
             end
@@ -877,37 +883,62 @@ local SECTION2 = Functions:MakeSection(MainScroll, UDim2.new(0.532, 0, 0.001, 0)
 local SECTION3 = Functions:MakeSection(MainScroll, UDim2.new(0.531, 0, 0.513, 0), UDim2.new(0, 300, 0, 110))
 local SECTION4 = Functions:MakeSection(MainScroll, UDim2.new(0.015, 0, 0.347, 0), UDim2.new(0, 300, 0, 350))
 local SECTION5 = Functions:MakeSection(MainScroll, UDim2.new(0.531, 0, 0.371, 0), UDim2.new(0, 300, 0, 150))
-local SECTION6 = Functions:MakeSection(VisualMenu, UDim2.new(0.018, 0, 0.02, 0), UDim2.new(0, 300, 0, 525))
+local SECTION6 = Functions:MakeSection(VisualMenu, UDim2.new(0.018, 0, 0.02, 0), UDim2.new(0, 300, 0, 300))
 
-local FullbrightTurn = Functions:MakeTextButton(WorldMenu, "Fullbright", "Fullbright", UDim2.new(0.016, 0, 0.022, 0), functions, "FullbrightF")
-local TurnOpen_doors = Functions:MakeTextButton(WorldMenu, "OpenDoors", "Auto open doors", UDim2.new(0.016, 0, 0.109, 0), functions, "AutoOpenDoorsF")
+local FullbrightTurn = Functions:MakeTextButton(WorldMenu, "Fullbright", "Fullbright", UDim2.new(0.016, 0, 0.022, 0), functions, "FullbrightF", function()
+      FullbrightL()
+end)
+local TurnOpen_doors = Functions:MakeTextButton(WorldMenu, "OpenDoors", "Auto open doors", UDim2.new(0.016, 0, 0.109, 0), functions, "AutoOpenDoorsF", function()
+      Open_doorsL()
+end)
 local nobarriersTurn = Functions:MakeTextButton(WorldMenu, "nobarriers", "No barriers", UDim2.new(0.016, 0, 0.192, 0), functions, "nobarriersF")
-local fastpickupTurn = Functions:MakeTextButton(WorldMenu, "fastpickup", "Fast pick up", UDim2.new(0.016, 0, 0.275, 0), functions, "fastpickupF")
+local fastpickupTurn = Functions:MakeTextButton(WorldMenu, "fastpickup", "Fast pick up", UDim2.new(0.016, 0, 0.275, 0), functions, "fastpickupF", function()
+      fastpickupL()
+end)
 local flyTurn = Functions:MakeTextButton(PlayerMenu, "Fly", "Fly", UDim2.new(0.016, 0, 0.352, 0), functions, "FlyF")
-local infstaminaTurn = Functions:MakeTextButton(PlayerMenu, "infstamina", "Inf stamina", UDim2.new(0.016, 0, 0.439, 0), functions, "infstaminaF")
-local nofalldamageTurn = Functions:MakeTextButton(PlayerMenu, "nofalldamage", "No fall damage", UDim2.new(0.016, 0, 0.525, 0), functions, "nofalldamageF")
-local lockpickTurn = Functions:MakeTextButton(FarmMenu, "lockpick", "Lockpick", UDim2.new(0.016, 0, 0.022, 0), functions, "lockpickF")
-local atmTurn = Functions:MakeTextButton(FarmMenu, "ATM", "ATM", UDim2.new(0.016, 0, 0.099, 0), functions, "atmF")
-local instantreloadTurn = Functions:MakeTextButton(MainScroll, "reload", "Instant reload", UDim2.new(0.016, 0, 0.662, 0), functions, "instant_reloadF")
-local infpepperTurn = Functions:MakeTextButton(MainScroll, "infpepper", "Inf pepper spray", UDim2.new(0.016, 0, 0.704, 0), functions, "infpepperF")
+local infstaminaTurn = Functions:MakeTextButton(PlayerMenu, "infstamina", "Inf stamina", UDim2.new(0.016, 0, 0.439, 0), functions, "infstaminaF", function()
+      infstaminaL()
+end)
+local nofalldamageTurn = Functions:MakeTextButton(PlayerMenu, "nofalldamage", "No fall damage", UDim2.new(0.016, 0, 0.525, 0), functions, "nofalldamageF", function()
+      nofalldamageL()
+end)
+local lockpickTurn = Functions:MakeTextButton(FarmMenu, "lockpick", "Lockpick", UDim2.new(0.016, 0, 0.022, 0), functions, "lockpickF", function()
+      lockpickL()
+end)
+local atmTurn = Functions:MakeTextButton(FarmMenu, "ATM", "ATM", UDim2.new(0.016, 0, 0.099, 0), functions, "atmF", function()
+      atmL()
+end)
+local instantreloadTurn = Functions:MakeTextButton(MainScroll, "reload", "Instant reload", UDim2.new(0.016, 0, 0.662, 0), functions, "instant_reloadF", function()
+      instantreloadL()
+end)
+local infpepperTurn = Functions:MakeTextButton(MainScroll, "infpepper", "Inf pepper spray", UDim2.new(0.016, 0, 0.704, 0), functions, "infpepperF", function()
+      infpepperL()
+end)
 local norecoilTurn = Functions:MakeTextButton(MainScroll, "norecoil", "No recoil", UDim2.new(0.014, 0, 0.749, 0), functions, "norecoilF")
-local glassarmsTurn = Functions:MakeTextButton(VisualMenu, "glassarms", "Glass arms", UDim2.new(0.53, 0, 0.019, 0), functions, "glassarmsF")
-local glassarmscolor = Functions:MakeColorWheelButton(VisualMenu, UDim2.new(0.937, 0, 0.025, 0))
+local glassarmsTurn = Functions:MakeTextButton(VisualMenu, "glassarms", "Glass arms", UDim2.new(0.53, 0, 0.019, 0), functions, "glassarmsF", function()
+      glassarmsL()
+end)
+local glassarmscolor = Functions:MakeColorWheelButton(VisualMenu, UDim2.new(0.937, 0, 0.025, 0), function()
+      glassarmsL()
+end)
 
 --// silent aim in section \\--
 local silentaimTurn = Functions:MakeSectionButton(SECTION1, "silentaim", "Silent aim", UDim2.new(0.03, 0, 0.022, 0), UDim2.new(0, 160, 0, 32), functions, "silentaimF")
 local silentaimdraw = Functions:MakeSectionCheckButton(SECTION1, "Draw", "Draw circle", UDim2.new(0.029, 0, 0.145, 0), SectionSettings.SilentAim, "Draw", true, "Size", UDim2.new(0, 0, 1.367, 0), 50, 300, function(val)
       SectionSettings.SilentAim.DrawSize = math.floor(val)
 end)
+
 local silentaimdrawcolor = Functions:MakeColorWheelButton(SECTION1, UDim2.new(0.783, 0, 0.145, 0))
 local silentaimpart = Functions:MakeSectionClickButton(SECTION1, "TargetPart", "Target part", UDim2.new(0.029, 0, 0.398, 0), UDim2.new(0, 160, 0, 32))
-local silentaimwallcheck = Functions:MakeSectionCheckButton(SECTION1, "CheckWall", "Check wall", UDim2.new(0.029, 0, 0.523, 0))
-local silentaimteamcheck = Functions:MakeSectionCheckButton(SECTION1, "CheckTeam", "Check team", UDim2.new(0.029, 0, 0.645, 0))
-local silentaimwhitelistcheck = Functions:MakeSectionCheckButton(SECTION1, "CheckList", "Check white list", UDim2.new(0.029, 0, 0.766, 0))
-local silentaimcheckdistance = Functions:MakeSectionCheckButton(SECTION1, "CheckDist", "Check distance", UDim2.new(0.029, 0, 0.882, 0))
+local silentaimwallcheck = Functions:MakeSectionCheckButton(SECTION1, "CheckWall", "Check wall", UDim2.new(0.029, 0, 0.523, 0), SectionSettings.SilentAim, "CheckWall", false, "", nil, nil, nil)
+local silentaimteamcheck = Functions:MakeSectionCheckButton(SECTION1, "CheckTeam", "Check team", UDim2.new(0.029, 0, 0.645, 0), SectionSettings.SilentAim, "CheckTeam", false, "", nil, nil, nil)
+local silentaimwhitelistcheck = Functions:MakeSectionCheckButton(SECTION1, "CheckList", "Check white list", UDim2.new(0.029, 0, 0.766, 0), SectionSettings.SilentAim, "CheckList", false, "", nil, nil, nil)
+local silentaimcheckdistance = Functions:MakeSectionCheckButton(SECTION1, "CheckDist", "Check distance", UDim2.new(0.029, 0, 0.882, 0), SectionSettings.SilentAim, "CheckDist", false, "", nil, nil, nil)
 
 --// aimbot in section \\--
-local aimbotTurn = Functions:MakeSectionButton(SECTION2, "aimbot", "Aim bot", UDim2.new(0.03, 0, 0.022, 0), UDim2.new(0, 160, 0, 32), functions, "aimbotF")
+local aimbotTurn = Functions:MakeSectionButton(SECTION2, "aimbot", "Aim bot", UDim2.new(0.03, 0, 0.022, 0), UDim2.new(0, 160, 0, 32), functions, "aimbotF", function()
+      aimbotL()
+end)
 local aimbotdraw = Functions:MakeSectionCheckButton(SECTION2, "Draw", "Draw circle", UDim2.new(0.029, 0, 0.158, 0), SectionSettings.AimBot, "Draw", true, "Size", UDim2.new(0, 0, 1.367, 0), 50, 300, function(val)
       SectionSettings.AimBot.DrawSize = math.floor(val)
 end)
@@ -924,11 +955,13 @@ local rocketcontrolTurn = Functions:MakeSectionButton(SECTION3, "RocketControl",
 local rocketcontrolspeed = Functions:MakeSectionSlider(SECTION3, "Speed", UDim2.new(0.029, 0, 0.53, 0))
 
 --// melee aura in section \\--
-local meleeauraTurn = Functions:MakeSectionButton(SECTION4, "meleeaura", "Melee aura", UDim2.new(0.03, 0, 0.022, 0), UDim2.new(0, 160, 0, 32), functions, "meleeauraF")
+local meleeauraTurn = Functions:MakeSectionButton(SECTION4, "meleeaura", "Melee aura", UDim2.new(0.03, 0, 0.022, 0), UDim2.new(0, 160, 0, 32), functions, "meleeauraF", function()
+      meleeauraL()
+end)
 local meleeaurashomanim = Functions:MakeSectionCheckButton(SECTION4, "ShowAnim", "Show anim", UDim2.new(0.029, 0, 0.182, 0))
 local meleeauratargetpart = Functions:MakeSectionClickButton(SECTION4, "TargetPart", "Target part", UDim2.new(0.029, 0, 0.329, 0), UDim2.new(0, 160, 0, 32))
-local meleeauracheckwall = Functions:MakeSectionCheckButton(SECTION4, "CheckWall", "Check wall", UDim2.new(0.029, 0, 0.468, 0))
-local meleeaurateamcheck = Functions:MakeSectionCheckButton(SECTION4, "CheckTeam", "Check team", UDim2.new(0.029, 0, 0.614, 0))
+local meleeauracheckwall = Functions:MakeSectionCheckButton(SECTION4, "AutoAttack", "Auto attack", UDim2.new(0.029, 0, 0.468, 0))
+local meleeaurateamcheck = Functions:MakeSectionCheckButton(SECTION4, "CheckTeam", "Check team", UDim2.new(0.029, 0, 0.6, 0))
 local meleeaurawhitelistcheck = Functions:MakeSectionCheckButton(SECTION4, "CheckList", "Check white list", UDim2.new(0.029, 0, 0.739, 0))
 local neleeaurapos = Functions:MakeSectionSlider(SECTION4, "Distance", UDim2.new(0.029, 0, 0.875, 0))
 
@@ -938,16 +971,14 @@ local ragebotteamcheck = Functions:MakeSectionCheckButton(SECTION5, "CheckTeam",
 local ragebotwhitelistcheck = Functions:MakeSectionCheckButton(SECTION5, "CheckList", "Check white list", UDim2.new(0.029, 0, 0.677, 0))
 
 --// esp in section \\--
-local espTurn = Functions:MakeSectionButton(SECTION6, "ESP", "ESP", UDim2.new(0.03, 0, 0.022, 0), UDim2.new(0, 160, 0, 32), functions, "EspF")
-local espNames = Functions:MakeSectionCheckButton(SECTION6, "Names", "Names", UDim2.new(0.029, 0, 0.124, 0))
-local espBox = Functions:MakeSectionCheckButton(SECTION6, "Box", "Box", UDim2.new(0.029, 0, 0.226, 0))
-local espHealth = Functions:MakeSectionCheckButton(SECTION6, "Health", "Health", UDim2.new(0.029, 0, 0.326, 0))
-local espChams = Functions:MakeSectionCheckButton(SECTION6, "Chams", "Chams", UDim2.new(0.029, 0, 0.429, 0))
-local espTeamcheck = Functions:MakeSectionCheckButton(SECTION6, "CheckTeam", "Team check", UDim2.new(0.029, 0, 0.529, 0))
-local espWhitelistcheck = Functions:MakeSectionCheckButton(SECTION6, "CheckList", "White list check", UDim2.new(0.029, 0, 0.629, 0))
-local espScraps = Functions:MakeSectionCheckButton(SECTION6, "Scraps", "Scraps", UDim2.new(0.029, 0, 0.729, 0))
-local espCrates = Functions:MakeSectionCheckButton(SECTION6, "Crates", "Crates", UDim2.new(0.029, 0, 0.826, 0))
-local espSafes = Functions:MakeSectionCheckButton(SECTION6, "Safes", "Safes", UDim2.new(0.029, 0, 0.921, 0))
+local espTurn = Functions:MakeSectionButton(SECTION6, "ESP", "ESP", UDim2.new(0.03, 0, 0.022, 0), UDim2.new(0, 160, 0, 32), functions, "EspF", function()
+      highlightL()
+end)
+local espChams = Functions:MakeSectionCheckButton(SECTION6, "Chams", "Chams", UDim2.new(0.029, 0, 0.186, 0), SectionSettings.ESP, "Chams", false, "", nil, nil, nil)
+local espTool = Functions:MakeSectionCheckButton(SECTION6, "Tools", "Tools", UDim2.new(0.029, 0, 0.343, 0), SectionSettings.ESP, "Tools", false, "", nil, nil, nil)
+local espScraps = Functions:MakeSectionCheckButton(SECTION6, "Scraps", "Scraps", UDim2.new(0.029, 0, 0.509, 0), SectionSettings.ESP, "Scraps", false, "", nil, nil , nil)
+local espCrates = Functions:MakeSectionCheckButton(SECTION6, "Crates", "Crates", UDim2.new(0.029, 0, 0.679, 0), SectionSettings.ESP, "Crates", false, "", nil, nil, nil)
+local espSafes = Functions:MakeSectionCheckButton(SECTION6, "Safes", "Safes", UDim2.new(0.029, 0, 0.856, 0), SectionSettings.ESP, "Safes", false, "", nil, nil, nil)
 
 local INDEX = {
       {button = FullbrightTurn, func = functions, name = "FullbrightF", section = false},
@@ -964,7 +995,8 @@ local INDEX = {
       {button = norecoilTurn, func = functions, name = "norecoilF", section = false},
       {button = glassarmsTurn, func = functions, name = "glassarmsF", section = false},
       {button = lockpickTurn, func = functions, name = "lockpickF", section = false},
-      {button = atmTurn, func = functions, name = "atmF", section = false}
+      {button = atmTurn, func = functions, name = "atmF", section = false},
+      {button = espTurn, func = functions, name = "EspF", section = true},
 }
 
 local INDEX2 = {
@@ -973,7 +1005,12 @@ local INDEX2 = {
       {button = aimbotcheckteam, func = SectionSettings.AimBot, name = "CheckTeam"},
       {button = aimbotwhitelistcheck, func = SectionSettings.AimBot, name = "CheckWhiteList"},
       {button = aimbotcheckdist, func = SectionSettings.AimBot, name = "CheckDistance"},
-      {button = aimbotvelocity, func = SectionSettings.AimBot, name = "Velocity"}
+      {button = aimbotvelocity, func = SectionSettings.AimBot, name = "Velocity"},
+      {button = espChams, func = SectionSettings.ESP, name = "Chams"},
+      {button = espTool, func = SectionSettings.ESP, name = "Tools"},
+      {button = espScraps, func = SectionSettings.ESP, name = "Scraps"},
+      {button = espCrates, func = SectionSettings.ESP, name = "Crates"},
+      {button = espSafes, func = SectionSettings.ESP, name = "Safes"},
 }
 
 local FOV = Functions:MakeSlider(PlayerMenu, "fov", "FOV", UDim2.new(0.016, 0, 0.022, 0), 70, 120, function(value)
@@ -984,20 +1021,11 @@ local FOV = Functions:MakeSlider(PlayerMenu, "fov", "FOV", UDim2.new(0.016, 0, 0
             camera.FieldOfView = value
       end)
 end)
+
 local CameraDist = Functions:MakeSlider(PlayerMenu, "CameraDist", "Camera distance", UDim2.new(0.016, 0, 0.105, 0), 10, 50, function(value)
       me.CameraMaxZoomDistance = value
 end)
-local Speed = Functions:MakeSlider(PlayerMenu, "Speed", "Speed", UDim2.new(0.016, 0, 0.184, 0), 16, 35, function(value)
-      if remotes.Speed then
-            remotes.Speed:Disconnect()
-      end
-      remotes.Speed = run.RenderStepped:Connect(function()
-            local char = me.Character
-            local hum = char:FindFirstChildOfClass("Humanoid")
-            if not char or not hum then return end
-            hum.WalkSpeed = value
-      end)
-end)
+
 local Gravity = Functions:MakeSlider(PlayerMenu, "gravity", "Gravity", UDim2.new(0.016, 0, 0.265, 0), 195, 75, function(value)
       game.Workspace.Gravity = value
 end)
@@ -1240,28 +1268,33 @@ local Commands = {
       end,
 }
 
-run.RenderStepped:Connect(function()
+function FullbrightL()
       if functions.FullbrightF == true then
             light.ExposureCompensation = 1
       elseif functions.FullbrightF == false then
             light.ExposureCompensation = 0
       end
-      if functions.AutoOpenDoorsF == true then
-            if workspace:FindFirstChild("Map") then
-                  for _, i in pairs(game.Workspace:FindFirstChild("Map").Doors:GetChildren()) do
-                        if me.Character and me.Character:FindFirstChild("HumanoidRootPart") and (me.Character:FindFirstChild("HumanoidRootPart").Position - i:FindFirstChild("DoorBase").Position).Magnitude <= 20 then
-                              if i:FindFirstChild("Values"):FindFirstChild("Locked").Value == true then
-                                    i:FindFirstChild("Events"):FindFirstChild("Toggle"):FireServer("Unlock", i.Lock)
+end
+
+function Open_doorsL()
+     if functions.AutoOpenDoorsF then
+            remotes.open_doorsRUN = run.RenderStepped:Connect(function()
+                  local Folder_Map = workspace:FindFirstChild("Map")
+                  if not Folder_Map then return end
+                  for _, a in pairs(Folder_Map.Doors:GetChildren()) do
+                        if me.Character and me.Character:FindFirstChild("HumanoidRootPart") and (me.Character:FindFirstChild("HumanoidRootPart").Position - a:FindFirstChild("DoorBase").Position).Magnitude <= 20 then
+                             if a:FindFirstChild("Values"):FindFirstChild("Locked").Value == true then
+                                    a:FindFirstChild("Events"):FindFirstChild("Toggle"):FireServer("Unlock", a.Lock)
                                     local b1 = "Open"
                                     local b2
-                                    local KNOB1 = i:FindFirstChild("Knob1")
-                                    local KNOB2 = i:FindFirstChild("Knob2")
+                                    local KNOB1 = a:FindFirstChild("Knob1")
+                                    local KNOB2 = a:FindFirstChild("Knob2")
                                     local KNOB1pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - KNOB1.Position).Magnitude
                                     local KNOB2pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - KNOB2.Position).Magnitude
                                     b2 = (KNOB1pos < KNOB2pos) and KNOB1 or KNOB2
-                                    i:FindFirstChild("Events"):FindFirstChild("Toggle"):FireServer(b1, b2)
-                              else
-                                    for _, a in pairs(game.Workspace:WaitForChild("Map").Doors:GetChildren()) do
+                                    a:FindFirstChild("Events"):FindFirstChild("Tooggle"):FireServer(b1, b2)
+                             else
+                                    for _, a in pairs(Folder_Map.Doors:GetChildren()) do
                                           if me.Character and me.Character:FindFirstChild("HumanoidRootPart") and (me.Character:FindFirstChild("HumanoidRootPart").Position - a:FindFirstChild("DoorBase").Position).Magnitude <= 20 then
                                                 local opened = a:FindFirstChild("Values"):FindFirstChild("Open")
                                                 if opened and opened.Value == false then
@@ -1276,56 +1309,31 @@ run.RenderStepped:Connect(function()
                                                 end
                                           end
                                     end
-                              end
+                             end 
                         end
-                  end
-            end
-      end
-      --[[function disableTouchAndQuery(part)
-            if part:IsA("BasePart") then
-                  part.CanTouch = functions.nobarriersF
-                  part.CanQuery = functions.nobarriersF
-            end
-      end
-
-      function findAndDisableParts()
-            local partNames = {"BarbedWire", "RG_Part", "Spike"}
-
-            for _, partName in ipairs(partNames) do
-                  for _, part in pairs(game.Workspace:GetDescendants()) do
-                        if part.Name == partName then
-                              disableTouchAndQuery(part)
-                        end
-                  end
-            end
-      end
-      function disableTouchAndQuery2(part)
-            if part:IsA("BasePart") then
-                  part.CanTouch = functions.nobarriersF
-                  part.CanQuery = functions.nobarriersF
-            end
-      end
-
-      function findAndDisableParts2()
-            local partNames2 = {"FirePart", "Grinder"}
-
-            for _, partName in ipairs(partNames2) do
-                  for _, part in pairs(game.Workspace:GetDescendants()) do
-                        if part.Name == partName then
-                              disableTouchAndQuery2(part)
-                        end
-                  end
-            end
-      end
-      findAndDisableParts()
-      findAndDisableParts2()]]
-      if functions.fastpickupF == true then
-            workspace.DescendantAdded:Connect(function(obj)
-                  if obj:IsA("ProximityPrompt") then
-                        obj.HoldDuration = 0
                   end
             end)
-      end
+     else
+            if remotes.open_doorsRUN then
+                  remotes.open_doorsRUN:Disconnect()
+                  remotes.open_doorsRUN = nil
+            end
+     end
+end
+
+function fastpickupL()
+      workspace.DescendantAdded:Connect(function(obj)
+            if obj:IsA("ProximityPrompt") then
+                  if functions.fastpickupF == true then
+                        obj.HoldDuration = 0
+                  else
+                        return false
+                  end
+            end
+      end)
+end
+
+function infstaminaL()
       if functions.infstaminaF == true then
             local oldStamina
             local succes, no = pcall(function()
@@ -1341,132 +1349,57 @@ run.RenderStepped:Connect(function()
                         )
             end)
             if not succes then
-                  local s, n = pcall(function()
-                        local stamina = {}
-                        function get()
-                              for index, value in pairs(getgc(true)) do
-                                    if type(value) == "table" and rawget(value, "S") then
-                                          stamina[#stamina + 1] = value
-                                    end
+                  local stamina = {}
+                  function get()
+                        for index, value in pairs(getgc(true)) do
+                              if type(value) == "table" and rawget(value, "S") then
+                                    stamina[#stamina + 1] = value
                               end
                         end
+                  end
+                  local ss, nn = pcall(function()
                         get()
-                        local r
-                        r = game:GetService("RunService").RenderStepped:Connect(function()
+                  end)
+                  if ss then
+                        remotes.infstamina = game:GetService("RunService").RenderStepped:Connect(function()
+                              get()
                               if functions.infstaminaF then
                                     for _, a in pairs(stamina) do
                                           a.S = 100
                                     end
                               end
                         end)
-                  end)
-                  if not s then
-                        ConsoleText("Patched or you exploit not support", "error")
-                        functions.infstaminaF = false
+                  else
+                        ConsoleText("Patched or your exploit not support.", "error"); functions.infstaminaF = false
                   end
             end
+      else
+            if remotes.infstamina then remotes.infstamina:Disconnect() end; remotes.infstamina = nil
       end
+end
+
+function nofalldamageL()
       if functions.nofalldamageF == true then
-            local MYCHAR = me.Character
-            if MYCHAR and not MYCHAR:FindFirstChildOfClass("ForceField") then
+            local mychar = me.Character
+            if mychar then
                   local ff = Instance.new("ForceField")
-                  ff.Parent = MYCHAR
+                  ff.Parent = mychar
                   ff.Visible = false
+            else
+                  me.CharacterAdded:Connect(function(char)
+                        if char and functions.nofalldamageF == true then
+                              local ff = Instance.new("ForceField")
+                              ff.Parent = char
+                              ff.Visible = false
+                        end
+                  end)
             end
       else
-            me.Character:FindFirstChildOfClass("ForceField"):Destroy()
-      end
-      if functions.instant_reloadF == true then
-            local gunR_remote = game:GetService("ReplicatedStorage").Events.GNX_R
-            local tool = me.Character:FindFirstChildOfClass("Tool")
-            if tool then
-                  if tool:FindFirstChild("IsGun") then
-                        gunR_remote:FireServer(tick(), "KLWE89U0", tool);
-                        gunR_remote:FireServer(tick(), "KLWE89U0", tool);
-                  end
-            else
-                  return
+            if me.Character and me.Character:FindFirstChildOfClass("ForceField") then
+                  me.Character:FindFirstChildOfClass("ForceField"):Destroy()
             end
       end
-      if functions.infpepperF == true then
-            function pepper(obj)
-                  obj:FindFirstChild("Ammo").MinValue = 100
-                  obj:FindFirstChild("Ammo").Value = 100
-            end
-            
-            local Pepper = me.Backpack:FindFirstChild("Pepper-spray")
-            if Pepper then
-                  pepper(Pepper)
-            else
-                  return
-            end
-      end
-      local viewfolder = camera:WaitForChild("ViewModel")
-      if functions.glassarmsF == true then
-            if (viewfolder["Left Arm"] and viewfolder["Right Arm"]) then
-                  viewfolder["Left Arm"].Material = Enum.Material.ForceField
-                  viewfolder["Right Arm"].Material = Enum.Material.ForceField
-            end
-      else
-            if (viewfolder["Left Arm"] and viewfolder["Right Arm"]) then
-                  viewfolder["Left Arm"].Material = Enum.Material.Plastic
-                  viewfolder["Right Arm"].Material = Enum.Material.Plastic
-            end
-      end
-      function lockpick(gui, val)
-            for _, a in pairs(gui:GetDescendants()) do
-                  if a:IsA("ImageLabel") and a.Name == "Bar" then
-                        if a.Parent.Name ~= "Attempts" then
-                              local oldsize = a.Size
-                              run.RenderStepped:Connect(function()
-                                    if val == true then
-                                          task.wait()
-                                          a.Size = UDim2.new(0, 280, 0, 280)
-                                    else
-                                          task.wait()
-                                          a.Size = oldsize
-                                    end
-                              end)
-                        end
-                  end
-            end
-      end
-      
-      if functions.lockpickF == true then
-            me.PlayerGui.ChildAdded:Connect(function(gui)
-                  if gui:IsA("ScreenGui") and gui.Name == "LockpickGUI" then
-                        lockpick(gui, true)
-                  end
-            end)
-      elseif functions.lockpickF == false then
-            me.PlayerGui.ChildAdded:Connect(function(gui)
-                  if gui:IsA("ScreenGui") and gui.Name == "LockpickGUI" then
-                        lockpick(gui, false)
-                  end
-            end)
-      end
-      function GetATM(Studs)
-            local Part;
-            for _, v in ipairs(game:GetService("Workspace").Map.ATMz:GetChildren()) do
-                  if v:FindFirstChild("MainPart") then
-                        local Distance = (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position - v:FindFirstChild("MainPart").Position).Magnitude
-                        if Distance < Studs then
-                              Studs = Distance
-                              Part = v:FindFirstChild("MainPart")
-                        end
-                  end
-            end
-            return Part
-      end
-      if functions.atmF == true then
-            if game:GetService("ReplicatedStorage").PlayerbaseData2[game:GetService("Players").LocalPlayer.Name].NextAllowance.Value == 0 then
-                  local ATM = GetATM(math.huge)
-                  if ATM then
-                        game:GetService("ReplicatedStorage").Events.CLMZALOW:InvokeServer(ATM)
-                  end
-            end
-      end
-end)
+end
 
 run.RenderStepped:Connect(function()
       for i, a in pairs(INDEX) do
@@ -1521,7 +1454,7 @@ function SkinsL()
       end)
 end
 
-function killauraL()
+function meleeauraL()
       local plrs = game:GetService("Players")
       local me = plrs.LocalPlayer
       local run = game:GetService("RunService")
@@ -1530,15 +1463,9 @@ function killauraL()
       local remote2 = game:GetService("ReplicatedStorage").Events["XMHH2.2"]
 
       local maxdist = 20
-      local attackCooldown = 0.5
-      local lastAttackTimes = {}
 
       function Attack(target)
             if not (target and target:FindFirstChild("Head")) then return end
-            local targetName = target.Name
-            if os.clock() - (lastAttackTimes[targetName] or 0) < attackCooldown then return end
-
-            lastAttackTimes[targetName] = os.clock()
 
             local arg1 = {
                   [1] = "🍞",
@@ -1551,10 +1478,12 @@ function killauraL()
             }
 
             local result = remote1:InvokeServer(unpack(arg1))
-            wait(0.3)
+
+            task.wait(0.5)
 
             local tool = me.Character:FindFirstChildOfClass("Tool")
             if tool then
+                  local Handle = tool:FindFirstChild("WeaponHandle") or tool:FindFirstChild("Handle") or me.Character:FindFirstChild("Right Arm")
                   local arg2 = {
                         [1] = "🍞",
                         [2] = tick(),
@@ -1562,31 +1491,13 @@ function killauraL()
                         [4] = "2389ZFX34",
                         [5] = result,
                         [6] = false,
-                        [7] = tool.WeaponHandle,
+                        [7] = Handle,
                         [8] = target:FindFirstChild("Head"),
                         [9] = target,
                         [10] = me.Character:FindFirstChild("HumanoidRootPart").Position,
                         [11] = target:FindFirstChild("Head").Position
                   }
-                  local arg3 = {
-                        [1] = "🍞",
-                        [2] = tick(),
-                        [3] = tool,
-                        [4] = "2389ZFX34",
-                        [5] = result,
-                        [6] = false,
-                        [7] = me.Character["Right Arm"],
-                        [8] = target:FindFirstChild("Head"),
-                        [9] = target,
-                        [10] = me.Character:FindFirstChild("Right Arm").Position,
-                        [11] = target:FindFirstChild("Head").Position
-                  }
-                  local toolname = tool.Name
-                  if toolname ~= "Fists" then
-                        remote2:FireServer(unpack(arg2))
-                  else
-                        remote2:FireServer(unpack(arg3))
-                  end
+                  remote2:FireServer(unpack(arg2))
             else
                   return
             end
@@ -1604,7 +1515,7 @@ function killauraL()
                                           local hrp = char:FindFirstChild("HumanoidRootPart")
                                           if hrp then
                                                 local distance = (myhrp.Position - hrp.Position).Magnitude
-                                                if distance < maxdist and a.Character:FindFirstChildOfClass("Humanoid").Health > 15 and not char:FindFirstChildOfClass("ForceField") and functions.killauraF then
+                                                if distance < maxdist and a.Character:FindFirstChildOfClass("Humanoid").Health > 15 and not char:FindFirstChildOfClass("ForceField") then -- искать близжайшего игрока
                                                       Attack(char)
                                                 end
                                           end
@@ -1696,26 +1607,6 @@ function lockpickL()
       me.PlayerGui.ChildAdded:Connect(function(gui)
             if gui:IsA("ScreenGui") and gui.Name == "LockpickGUI" then
                   lockpick(gui)
-            end
-      end)
-end
-
-function fastpickupL()
-      local proximityPrompts = {}
-
-      workspace.DescendantAdded:Connect(function(item)
-            if item:IsA("ProximityPrompt") then
-                  proximityPrompts[item] = {
-                        originalDuration = item.HoldDuration
-                  }
-            end
-      end)
-
-      run.RenderStepped:Connect(function()
-            for prompt, info in pairs(proximityPrompts) do
-                  if functions.fast_pickupF then
-                        prompt.HoldDuration = 0
-                  end
             end
       end)
 end
@@ -1865,94 +1756,6 @@ function atmL()
       end)
 end
 
-function infstaminaL()
-      local oldStamina
-      local succes, no = pcall(function()
-            oldStamina =
-                  hookfunction(
-                        getupvalue(getrenv()._G.S_Take, 2),
-                        function(v1, ...)
-                              if (functions.infstaminaF) then 
-                                    v1 = 0
-                              end
-                              return oldStamina(v1, ...)
-                        end
-                  )
-      end)
-      if not succes then
-            local s, n = pcall(function()
-                  local stamina = {}
-                  local char = me.Character or me.CharacterAdded:Wait()
-                  local hum = char:FindFirstChildOfClass("Humanoid")
-                  function get()
-                        for index, value in pairs(getgc(true)) do
-                              if type(value) == "table" and rawget(value, "S") then
-                                    stamina[#stamina + 1] = value
-                              end
-                        end
-                  end
-                  get()
-                  local r
-                  r = game:GetService("RunService").RenderStepped:Connect(function()
-                        if functions.infstaminaF then
-                              for _, a in pairs(stamina) do
-                                    a.S = 100
-                              end
-                        end
-                  end)
-                  hum.Died:Connect(function()
-                        r:Disconnect()
-                  end)
-                  me.CharacterAdded:Connect(function()
-                        get()
-                        r = game:GetService("RunService").RenderStepped:Connect(function()
-                              if functions.infstaminaF then
-                                    for _, a in pairs(stamina) do
-                                          a.S = 100
-                                    end
-                              end
-                        end)
-                  end)
-            end)
-      end
-end
-
-function open_doorsL()
-      remotes.open_doorsRun = run.RenderStepped:Connect(function()
-            for _, i in pairs(game.Workspace:WaitForChild("Map").Doors:GetChildren()) do
-                  if me.Character and me.Character:FindFirstChild("HumanoidRootPart") and (me.Character:FindFirstChild("HumanoidRootPart").Position - i:FindFirstChild("DoorBase").Position).Magnitude <= 20 then
-                        if i:FindFirstChild("Values"):FindFirstChild("Locked").Value == true then
-                              i:FindFirstChild("Events"):FindFirstChild("Toggle"):FireServer("Unlock", i.Lock)
-                              local b1 = "Open"
-                              local b2
-                              local KNOB1 = i:FindFirstChild("Knob1")
-                              local KNOB2 = i:FindFirstChild("Knob2")
-                              local KNOB1pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - KNOB1.Position).Magnitude
-                              local KNOB2pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - KNOB2.Position).Magnitude
-                              b2 = (KNOB1pos < KNOB2pos) and KNOB1 or KNOB2
-                              i:FindFirstChild("Events"):FindFirstChild("Toggle"):FireServer(b1, b2)
-                        else
-                              for _, a in pairs(game.Workspace:WaitForChild("Map").Doors:GetChildren()) do
-                                    if me.Character and me.Character:FindFirstChild("HumanoidRootPart") and (me.Character:FindFirstChild("HumanoidRootPart").Position - a:FindFirstChild("DoorBase").Position).Magnitude <= 20 then
-                                          local opened = a:FindFirstChild("Values"):FindFirstChild("Open")
-                                          if opened and opened.Value == false then
-                                                local a1 = "Open"
-                                                local a2
-                                                local knob1 = a:FindFirstChild("Knob1")
-                                                local knob2 = a:FindFirstChild("Knob2")
-                                                local knob1pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - knob1.Position).Magnitude
-                                                local knob2pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - knob2.Position).Magnitude
-                                                a2 = (knob1pos < knob2pos) and knob1 or knob2
-                                                a:FindFirstChild("Events"):FindFirstChild("Toggle"):FireServer(a1, a2)
-                                          end
-                                    end
-                              end
-                        end
-                  end
-            end
-      end)
-end
-
 function nobarriersL(value)
       function disableTouchAndQuery(part)
             if part:IsA("BasePart") then
@@ -2034,7 +1837,7 @@ function ConsoleText(text, typeF)
 end
 
 Commands.cmds()
-ConsoleText("85% functions working, wait new update.", "text")
+ConsoleText("93% functions working, wait new update.", "text")
 
 ocmenukeybindLoad.MouseEnter:Connect(function()
       remotes.OCmenukeybind = true
