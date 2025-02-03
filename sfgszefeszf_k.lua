@@ -242,6 +242,7 @@ uischeckbutton.Transparency = 0.2
 
 CHECKBUTTON.MouseButton1Click:Connect(function()
       loadstring(game:HttpGet("https://raw.githubusercontent.com/drgdrxgdxrhyxdrhedrhesrdherd/dontworry/refs/heads/main/sfsefesh.lua"))()
+      GUI:Destroy()
 end)
 
 --[[GETKEYBUTTON.MouseButton1Click:Connect(function()
