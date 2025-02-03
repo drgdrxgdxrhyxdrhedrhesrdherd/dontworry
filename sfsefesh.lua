@@ -1629,7 +1629,7 @@ function highlightL()
                   local character = player.Character
                   if character then
                         local highlight = character:FindFirstChildOfClass("Highlight")
-                        if functions.highlightF then
+                        if functions.EspF then
                               if isPlayerVisible(player) then
                                     if not highlight then
                                           highlight = Instance.new("Highlight")
