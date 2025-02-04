@@ -48,7 +48,7 @@ local functions = {
       silentaimF = nil,
       aimbotF = false,
       rocket_controlF = nil,
-      meleeauraF = true,
+      meleeauraF = false,
       rage_botF = nil,
       EspF = false,
       instant_reloadF = false,
@@ -97,11 +97,11 @@ local SectionSettings = {
             Speed = 200
       },
       ESP = {
-            Chams = false,
-            Tools = false,
-            Scraps = false,
-            Crates = false,
-            Safes = false
+            Chams = nil,
+            Tools = nil,
+            Scraps = nil,
+            Crates = nil,
+            Safes = nil
       }
 }
 
@@ -112,6 +112,7 @@ local remotes = {
       infstamina = nil;
       Esp_NamesRUN = nil,
       aimbot_circle = nil,
+      aimbot_circlepos = nil,
 }
 
 function Animate(Button, val, section)
@@ -998,6 +999,7 @@ local INDEX = {
       {button = lockpickTurn, func = functions, name = "lockpickF", section = false},
       {button = atmTurn, func = functions, name = "atmF", section = false},
       {button = espTurn, func = functions, name = "EspF", section = true},
+      {button = meleeauraTurn, func = functions, name = "meleeauraF", section = true},
 }
 
 local INDEX2 = {
@@ -1692,7 +1694,7 @@ function aimbotL()
                   end
                   return closest
             end
-            remotes.circle_pos = run.RenderStepped:Connect(function()
+            remotes.aimbot_circlepos = run.RenderStepped:Connect(function()
                   remotes.aimbot_circle.Position = Vector2.new(input:GetMouseLocation().X, input:GetMouseLocation().Y)
             end)
             
@@ -1731,7 +1733,7 @@ function aimbotL()
                   end
             end)
       else
-            remotes.aimbot_circle:Remove(); remotes.aimbot_circle = nil
+            if remotes.aimbot_circle then remotes.aimbot_circle:Remove() end; remotes.aimbot_circle = nil; if remotes.aimbot_circlepos then remotes.aimbot_circlepos:Disconnect() end; remotes.aimbot_circlepos = nil
       end
 end
 
