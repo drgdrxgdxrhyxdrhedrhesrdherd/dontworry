@@ -10,7 +10,7 @@ local camera = game.Workspace.CurrentCamera
 _G.Keybind = Enum.KeyCode.Insert
 local ignore_binds = {Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.D, Enum.KeyCode.S, Enum.KeyCode.F9, Enum.KeyCode.F12, Enum.KeyCode.Tab, Enum.KeyCode.Space, Enum.KeyCode.Backspace, Enum.KeyCode.LeftControl, Enum.KeyCode.LeftShift, Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2, Enum.UserInputType.MouseButton3}
 
-local WhiteList = {}
+local WhiteList = {"sefseg", "sefjsefoij"}
 
 local FOLDER = {
       Function_Guns = false,
@@ -1325,12 +1325,20 @@ function Open_doorsL()
 end
 
 function fastpickupL()
-      workspace.DescendantAdded:Connect(function(obj)
-            if obj:IsA("ProximityPrompt") then
+      local proximityPrompts = {}
+
+      workspace.DescendantAdded:Connect(function(item)
+            if item:IsA("ProximityPrompt") then
+                  proximityPrompts[item] = {
+                        originalDuration = item.HoldDuration
+                  }
+            end
+      end)
+
+      run.RenderStepped:Connect(function()
+            for prompt, info in pairs(proximityPrompts) do
                   if functions.fastpickupF == true then
-                        obj.HoldDuration = 0
-                  else
-                        return false
+                        prompt.HoldDuration = 0
                   end
             end
       end)
