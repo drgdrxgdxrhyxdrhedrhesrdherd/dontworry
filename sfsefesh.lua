@@ -10,7 +10,7 @@ local camera = game.Workspace.CurrentCamera
 _G.Keybind = Enum.KeyCode.Insert
 local ignore_binds = {Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.D, Enum.KeyCode.S, Enum.KeyCode.F9, Enum.KeyCode.F12, Enum.KeyCode.Tab, Enum.KeyCode.Space, Enum.KeyCode.Backspace, Enum.KeyCode.LeftControl, Enum.KeyCode.LeftShift, Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2, Enum.UserInputType.MouseButton3}
 
-local WhiteList = {"sefseg", "sefjsefoij"}
+local WhiteList = {}
 
 local FOLDER = {
       Function_Guns = false,
