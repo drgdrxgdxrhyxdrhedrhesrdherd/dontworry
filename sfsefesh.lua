@@ -111,6 +111,7 @@ local remotes = {
       fov_connection = nil;
       infstamina = nil;
       Esp_NamesRUN = nil,
+      aimbot_circle = nil,
 }
 
 function Animate(Button, val, section)
@@ -1515,7 +1516,7 @@ function meleeauraL()
                                           local hrp = char:FindFirstChild("HumanoidRootPart")
                                           if hrp then
                                                 local distance = (myhrp.Position - hrp.Position).Magnitude
-                                                if distance < maxdist and a.Character:FindFirstChildOfClass("Humanoid").Health > 15 and not char:FindFirstChildOfClass("ForceField") then -- искать близжайшего игрока
+                                                if distance < maxdist and a.Character:FindFirstChildOfClass("Humanoid").Health > 15 and not char:FindFirstChildOfClass("ForceField") and functions.meleeauraF then -- искать близжайшего игрока
                                                       Attack(char)
                                                 end
                                           end
@@ -1656,78 +1657,82 @@ function highlightL()
 end
 
 function aimbotL()
-      local aimpart = "Head"
-      local target = nil
-      local radius = 150
-      local pressed = false
-      local aimtarget
-      local canusing = false
-      local FirstPerson = true
-      local velocity = true
-      local predict = 15
+      if functions.aimbotF == true then
+            local aimpart = "Head"
+            local target = nil
+            local radius = 150
+            local pressed = false
+            local aimtarget
+            local canusing = false
+            local FirstPerson = true
+            local velocity = true
+            local predict = 15
 
-      remotes.circle = Drawing.new("Circle")
-      remotes.circle.Color = Color3.fromRGB(255, 0, 0)
-      remotes.circle.Thickness = 2
-      remotes.circle.NumSides = 50
-      remotes.circle.Radius = radius
-      remotes.circle.Filled = false
-      remotes.circle.Visible = true
+            remotes.aimbot_circle = Drawing.new("Circle")
+            remotes.aimbot_circle.Color = Color3.fromRGB(255, 0, 0)
+            remotes.aimbot_circle.Thickness = 2
+            remotes.aimbot_circle.NumSides = 50
+            remotes.aimbot_circle.Radius = radius
+            remotes.aimbot_circle.Filled = false
+            remotes.aimbot_circle.Visible = true
 
-      local function getClosestTarget()
-            local closest, closestDist = nil, radius
-            for _, player in pairs(plrs:GetPlayers()) do
-                  if player ~= me and player.Character and player.Character:FindFirstChild(aimpart) then
-                        local pos, onScreen = camera:WorldToViewportPoint(player.Character[aimpart].Position)
-                        if onScreen then
-                              local distance = (Vector2.new(pos.X, pos.Y) - Vector2.new(input:GetMouseLocation().X, input:GetMouseLocation().Y)).Magnitude
-                              if distance < closestDist then
-                                    closestDist = distance
-                                    closest = player
+            local function getClosestTarget()
+                  local closest, closestDist = nil, radius
+                  for _, player in pairs(plrs:GetPlayers()) do
+                        if player ~= me and player.Character and player.Character:FindFirstChild(aimpart) then
+                              local pos, onScreen = camera:WorldToViewportPoint(player.Character[aimpart].Position)
+                              if onScreen then
+                                    local distance = (Vector2.new(pos.X, pos.Y) - Vector2.new(input:GetMouseLocation().X, input:GetMouseLocation().Y)).Magnitude
+                                    if distance < closestDist then
+                                          closestDist = distance
+                                          closest = player
+                                    end
                               end
                         end
                   end
+                  return closest
             end
-            return closest
-      end
-      remotes.circle_pos = run.RenderStepped:Connect(function()
-            remotes.circle.Position = Vector2.new(input:GetMouseLocation().X, input:GetMouseLocation().Y)
-      end)
-      
-      input.InputBegan:Connect(function(key)
-            if not input:GetFocusedTextBox() then
-                  if key.UserInputType == Enum.UserInputType.MouseButton2 then
-                        pressed = true
-                        aimtarget = getClosestTarget()
-                  end
-            end
-      end)
-      input.InputEnded:Connect(function(key)
-            if not input:GetFocusedTextBox() then
-                  if key.UserInputType == Enum.UserInputType.MouseButton2 then
-                        pressed = false
-                        aimtarget = nil
-                  end
-            end
-      end)
-      run.RenderStepped:Connect(function()
-            if FirstPerson then
-                  local magnitude = (camera.Focus.p - camera.CFrame.p).Magnitude
-                  canusing = magnitude <= 1.5
-            end
-            if functions.aimbotF and pressed and aimtarget and aimtarget.Character then
-                  local head = aimtarget.Character:FindFirstChild(aimpart)
-                  local humanoid = aimtarget.Character:FindFirstChild("Humanoid")
-
-                  if head and humanoid and humanoid.Health > 0 and canusing then
-                        local targetPosition = head.Position
-                        if velocity then
-                              targetPosition = targetPosition + head.Velocity / predict
+            remotes.circle_pos = run.RenderStepped:Connect(function()
+                  remotes.aimbot_circle.Position = Vector2.new(input:GetMouseLocation().X, input:GetMouseLocation().Y)
+            end)
+            
+            input.InputBegan:Connect(function(key)
+                  if not input:GetFocusedTextBox() then
+                        if key.UserInputType == Enum.UserInputType.MouseButton2 then
+                              pressed = true
+                              aimtarget = getClosestTarget()
                         end
-                        camera.CFrame = camera.CFrame:Lerp(CFrame.new(camera.CFrame.p, targetPosition), 0.9)
                   end
-            end
-      end)
+            end)
+            input.InputEnded:Connect(function(key)
+                  if not input:GetFocusedTextBox() then
+                        if key.UserInputType == Enum.UserInputType.MouseButton2 then
+                              pressed = false
+                              aimtarget = nil
+                        end
+                  end
+            end)
+            run.RenderStepped:Connect(function()
+                  if FirstPerson then
+                        local magnitude = (camera.Focus.p - camera.CFrame.p).Magnitude
+                        canusing = magnitude <= 1.5
+                  end
+                  if functions.aimbotF and pressed and aimtarget and aimtarget.Character then
+                        local head = aimtarget.Character:FindFirstChild(aimpart)
+                        local humanoid = aimtarget.Character:FindFirstChild("Humanoid")
+
+                        if head and humanoid and humanoid.Health > 0 and canusing then
+                              local targetPosition = head.Position
+                              if velocity then
+                                    targetPosition = targetPosition + head.Velocity / predict
+                              end
+                              camera.CFrame = camera.CFrame:Lerp(CFrame.new(camera.CFrame.p, targetPosition), 0.9)
+                        end
+                  end
+            end)
+      else
+            remotes.aimbot_circle:Remove(); remotes.aimbot_circle = nil
+      end
 end
 
 function atmL()
