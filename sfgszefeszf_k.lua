@@ -6,7 +6,10 @@ local input = game:GetService("UserInputService")
 local runn
 local device = ""
 
---local link = "https://ify.ac/1XUz"
+local link = "https://ify.ac/1Y7D"
+
+local adminkey = "sosal?"
+local userkey = loadstring(game:HttpGet("https://gist.githubusercontent.com/drgdrxgdxrhyxdrhedrhesrdherd/95fb2be36864ee8895120883fc87e0d4/raw/65ce597a05211d009e3e60f06856417ea7c0a54a/Key.lua"))()
 
 local GUI = Instance.new("ScreenGui")
 local s, a = pcall(function() GUI.Parent = game.CoreGui end) if not s then GUI.Parent = game.Players.LocalPlayer.PlayerGui end
@@ -241,11 +244,15 @@ uischeckbutton.Thickness = 3.5
 uischeckbutton.Transparency = 0.2
 
 CHECKBUTTON.MouseButton1Click:Connect(function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/drgdrxgdxrhyxdrhedrhesrdherd/dontworry/refs/heads/main/sfsefesh.lua"))()
-      GUI:Destroy()
+      if KEYINPUT.Text == adminkey or KEYINPUT.Text == userkey then
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/drgdrxgdxrhyxdrhedrhesrdherd/dontworry/refs/heads/main/sfsefesh.lua"))()
+            GUI:Destroy()
+      else
+            KEYINPUT.Text = "invalid key!"
+      end
 end)
 
---[[GETKEYBUTTON.MouseButton1Click:Connect(function()
+GETKEYBUTTON.MouseButton1Click:Connect(function()
       KEYINPUT.Text = link
       setclipboard(tostring(link))
-end)]]
+end)
