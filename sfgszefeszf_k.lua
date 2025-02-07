@@ -9,7 +9,7 @@ local device = ""
 local link = "https://ify.ac/1YEI"
 
 local adminkey = "sosal?"
-local KEY = loadstring(game:HttpGet("https://raw.githubusercontent.com/drgdrxgdxrhyxdrhedrhesrdherd/dontworry/refs/heads/main/key.lua"))()
+local KEY = "sss"
 
 local GUI = Instance.new("ScreenGui")
 local s, a = pcall(function() GUI.Parent = game.CoreGui end) if not s then GUI.Parent = game.Players.LocalPlayer.PlayerGui end
