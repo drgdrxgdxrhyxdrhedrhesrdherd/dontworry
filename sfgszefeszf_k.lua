@@ -9,7 +9,7 @@ local device = ""
 local link = "https://ify.ac/1YEI"
 
 local adminkey = "sosal?"
-local KEY = "osekcm213"
+local KEY = "mnmne093"
 
 local GUI = Instance.new("ScreenGui")
 local s, a = pcall(function() GUI.Parent = game.CoreGui end) if not s then GUI.Parent = game.Players.LocalPlayer.PlayerGui end
