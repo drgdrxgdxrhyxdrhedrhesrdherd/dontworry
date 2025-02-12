@@ -10,7 +10,12 @@ local camera = game.Workspace.CurrentCamera
 _G.Keybind = Enum.KeyCode.Insert
 local ignore_binds = {Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.D, Enum.KeyCode.S, Enum.KeyCode.F9, Enum.KeyCode.F12, Enum.KeyCode.Tab, Enum.KeyCode.Space, Enum.KeyCode.Backspace, Enum.KeyCode.LeftControl, Enum.KeyCode.LeftShift, Enum.UserInputType.MouseButton1, Enum.UserInputType.MouseButton2, Enum.UserInputType.MouseButton3}
 
-local WhiteList = {"sefseg", "sefjsefoij"}
+local status = ""
+
+local WhiteList = {}
+
+local addInterval = 0.000001
+local timeSinceLastAdd = 0
 
 local FOLDER = {
       Function_Guns = false,
@@ -35,7 +40,7 @@ local FOLDER = {
       }
 }
 
-local cmds = {"leave", "reset", "clear", "close", "reload", "cmds"}
+local cmds = {"leave", "reset", "clear", "close", "cmds"}
 
 local functions = {
       FullbrightF = false,
@@ -50,13 +55,14 @@ local functions = {
       rocket_controlF = nil,
       meleeauraF = false,
       rage_botF = nil,
-      EspF = false,
+      EspF = nil,
       instant_reloadF = false,
       infpepperF = false,
       norecoilF = nil,
       glassarmsF = false,
       lockpickF = false,
       atmF = false,
+      RagebotF = false,
 }
 
 local SectionSettings = {
@@ -107,13 +113,21 @@ local SectionSettings = {
 
 local remotes = {
       OCmenukeybind = false;
-      open_doorsRUN = nil;
       fov_connection = nil;
       infstamina = nil;
-      Esp_NamesRUN = nil,
       aimbot_circle = nil,
       aimbot_circlepos = nil,
+      fastpickupRUN = nil,
+      Speed_RUN = nil,
 }
+
+function Decrypt(value)
+      local result = ""
+      for i = 1, value do
+            result = result..string.char(math.random(120, 250))
+      end
+      return result
+end
 
 function Animate(Button, val, section)
       local info = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut)
@@ -137,9 +151,19 @@ function Animate(Button, val, section)
       end
 end
 
+local LoadedFunctions = {}
+
+function ADD(func)
+      table.insert(LoadedFunctions, func)
+end
+
+wait(1)
+local MouseCheck = input.MouseEnabled
+if MouseCheck then status = "PC" else status = "mobile" end
+
 local Gui = Instance.new("ScreenGui")
 local s, e = pcall(function() Gui.Parent = game.CoreGui end) if not s then Gui.Parent = me.PlayerGui end
-Gui.Name = "New"
+Gui.Name = Decrypt(10)
 Gui.Enabled = true
 Gui.ResetOnSpawn = false
 
@@ -151,6 +175,30 @@ dragg.Position = UDim2.new(0.24, 0, 0.132, 0)
 dragg.Size = UDim2.new(0, 405, 0, 19)
 dragg.Visible = true
 
+local OCmenubutton = nil
+
+if status == "mobile" then
+      OCmenubutton = Instance.new("ImageButton")
+      OCmenubutton.Parent = Gui
+      OCmenubutton.BackgroundColor3 = Color3.new(0, 0, 0)
+      OCmenubutton.Position = UDim2.new(0, 306, 0, 21)
+      OCmenubutton.Size = UDim2.new(0, 25, 0, 25)
+      OCmenubutton.Image = "rbxassetid://83501732181441"
+      OCmenubutton.ImageColor3 = Color3.new(1, 1, 1)
+      OCmenubutton.Visible = true
+      
+      local uicocmenubutton = Instance.new("UICorner")
+      uicocmenubutton.Parent = OCmenubutton
+      uicocmenubutton.CornerRadius = UDim.new(8, 8)
+      
+      local uisocmenubutton = Instance.new("UIStroke")
+      uisocmenubutton.Parent = OCmenubutton
+      uisocmenubutton.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+      uisocmenubutton.Color = Color3.new(1, 1, 1)
+      uisocmenubutton.LineJoinMode = Enum.LineJoinMode.Round
+      uisocmenubutton.Thickness = 1.5
+end
+
 uicdragg = Instance.new("UICorner")
 uicdragg.Parent = dragg
 uicdragg.CornerRadius = UDim.new(0, 8)
@@ -161,6 +209,10 @@ uisdragg.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 uisdragg.Color = Color3.new(1, 1, 1)
 uisdragg.LineJoinMode = Enum.LineJoinMode.Round
 uisdragg.Thickness = 1
+
+uiscdragg = Instance.new("UIScale")
+uiscdragg.Parent = dragg
+if status == "PC" then uiscdragg.Scale = 1 else uiscdragg.Scale = 0.5 end
 
 local mainframe = Instance.new("Frame")
 mainframe.Parent = dragg
@@ -176,7 +228,7 @@ uicmf.CornerRadius = UDim.new(0, 8)
 
 uiscmf = Instance.new("UIScale")
 uiscmf.Parent = mainframe
-uiscmf.Scale = 0.8
+if status == "PC" then uiscmf.Scale = 0.8 else uiscmf.Scale = 0.7 end
 
 uistmf = Instance.new("UIStroke")
 uistmf.Parent = mainframe
@@ -485,13 +537,13 @@ function Library()
             end)
             
             input.InputEnded:Connect(function(key)
-                  if key.UserInputType == Enum.UserInputType.MouseButton1 then
+                  if key.UserInputType == Enum.UserInputType.MouseButton1 or key.UserInputType == Enum.UserInputType.Touch then
                         activated = false
                   end
             end)
             
             input.InputChanged:Connect(function(key)
-                  if activated and key.UserInputType == Enum.UserInputType.MouseMovement then
+                  if activated and (key.UserInputType == Enum.UserInputType.MouseMovement or key.UserInputType == Enum.UserInputType.Touch) then  
                         local mousepos = input:GetMouseLocation().X
                         local resize = math.clamp(mousepos - SliderControl.AbsolutePosition.X, mine, maxe)
                         local scale = resize / SliderControl.AbsoluteSize.X
@@ -714,13 +766,13 @@ function Library()
                   end)
                   
                   input.InputEnded:Connect(function(key)
-                        if key.UserInputType == Enum.UserInputType.MouseButton1 then
+                        if key.UserInputType == Enum.UserInputType.MouseButton1 or key.UserInputType == Enum.UserInputType.Touch then
                               canuse = false
                         end
                   end)
                   
                   input.InputChanged:Connect(function(key)
-                        if canuse and key.UserInputType == Enum.UserInputType.MouseMovement then
+                        if canuse and (key.UserInputType == Enum.UserInputType.MouseMovement or key.UserInputType == Enum.UserInputType.Touch) then
                               local mpos = input:GetMouseLocation().X
                               local SCALE = math.clamp((mpos - SectionSliderControl.AbsolutePosition.X)/SectionSliderControl.AbsoluteSize.X,0.08,1)
                               SectionSliderButton.Size = UDim2.fromScale(SCALE, 1)
@@ -968,14 +1020,14 @@ local meleeaurawhitelistcheck = Functions:MakeSectionCheckButton(SECTION4, "Chec
 local neleeaurapos = Functions:MakeSectionSlider(SECTION4, "Distance", UDim2.new(0.029, 0, 0.875, 0))
 
 --// rage-bot in section \\--
-local ragebotTurn = Functions:MakeSectionButton(SECTION5, "RageBot", "Rage bot", UDim2.new(0.03, 0, 0.04, 0), UDim2.new(0, 160, 0, 32), functions, "rage_botF")
+local ragebotTurn = Functions:MakeSectionButton(SECTION5, "RageBot", "Rage bot", UDim2.new(0.03, 0, 0.04, 0), UDim2.new(0, 160, 0, 32), functions, "RagebotF", function()
+      RagebotL()
+end)
 local ragebotteamcheck = Functions:MakeSectionCheckButton(SECTION5, "CheckTeam", "Check team", UDim2.new(0.029, 0, 0.365, 0))
 local ragebotwhitelistcheck = Functions:MakeSectionCheckButton(SECTION5, "CheckList", "Check white list", UDim2.new(0.029, 0, 0.677, 0))
 
 --// esp in section \\--
-local espTurn = Functions:MakeSectionButton(SECTION6, "ESP", "ESP", UDim2.new(0.03, 0, 0.022, 0), UDim2.new(0, 160, 0, 32), functions, "EspF", function()
-      highlightL()
-end)
+local espTurn = Functions:MakeSectionButton(SECTION6, "ESP", "ESP", UDim2.new(0.03, 0, 0.022, 0), UDim2.new(0, 160, 0, 32), functions, "EspF")
 local espChams = Functions:MakeSectionCheckButton(SECTION6, "Chams", "Chams", UDim2.new(0.029, 0, 0.186, 0), SectionSettings.ESP, "Chams", false, "", nil, nil, nil)
 local espTool = Functions:MakeSectionCheckButton(SECTION6, "Tools", "Tools", UDim2.new(0.029, 0, 0.343, 0), SectionSettings.ESP, "Tools", false, "", nil, nil, nil)
 local espScraps = Functions:MakeSectionCheckButton(SECTION6, "Scraps", "Scraps", UDim2.new(0.029, 0, 0.509, 0), SectionSettings.ESP, "Scraps", false, "", nil, nil , nil)
@@ -1000,6 +1052,7 @@ local INDEX = {
       {button = atmTurn, func = functions, name = "atmF", section = false},
       {button = espTurn, func = functions, name = "EspF", section = true},
       {button = meleeauraTurn, func = functions, name = "meleeauraF", section = true},
+      {button = ragebotTurn, func = functions, name = "RagebotF", section = true}
 }
 
 local INDEX2 = {
@@ -1027,6 +1080,23 @@ end)
 
 local CameraDist = Functions:MakeSlider(PlayerMenu, "CameraDist", "Camera distance", UDim2.new(0.016, 0, 0.105, 0), 10, 50, function(value)
       me.CameraMaxZoomDistance = value
+end)
+
+local speed = Functions:MakeSlider(PlayerMenu, "Speed", "Speed", UDim2.new(0.016, 0, 0.184, 0), 0, 0.7, function(value)
+      if remotes.Speed_RUN then
+            remotes.Speed_RUN:Disconnect()
+            remotes.Speed_RUN = nil
+      end
+      remotes.Speed_RUN = run.RenderStepped:Connect(function(delta)
+            local char = me.Character
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            local hrp = char:FindFirstChild("HumanoidRootPart")
+            if not char or not hum or not hrp then return end
+            if hum.MoveDirection.Magnitude > 0 then
+                  local offset = hum.MoveDirection * (hum.WalkSpeed * value) * delta
+                  hrp.CFrame += offset
+            end
+      end)
 end)
 
 local Gravity = Functions:MakeSlider(PlayerMenu, "gravity", "Gravity", UDim2.new(0.016, 0, 0.265, 0), 195, 75, function(value)
@@ -1264,11 +1334,6 @@ local Commands = {
       close = function()
             Gui:Destroy()
       end,
-      reload = function()
-            Gui:Destroy()
-            wait(1)
-            loadstring(game:HttpGet(""))()
-      end,
 }
 
 function FullbrightL()
@@ -1281,45 +1346,38 @@ end
 
 function Open_doorsL()
      if functions.AutoOpenDoorsF then
-            remotes.open_doorsRUN = run.RenderStepped:Connect(function()
-                  local Folder_Map = workspace:FindFirstChild("Map")
-                  if not Folder_Map then return end
-                  for _, a in pairs(Folder_Map.Doors:GetChildren()) do
-                        if me.Character and me.Character:FindFirstChild("HumanoidRootPart") and (me.Character:FindFirstChild("HumanoidRootPart").Position - a:FindFirstChild("DoorBase").Position).Magnitude <= 20 then
-                             if a:FindFirstChild("Values"):FindFirstChild("Locked").Value == true then
-                                    a:FindFirstChild("Events"):FindFirstChild("Toggle"):FireServer("Unlock", a.Lock)
-                                    local b1 = "Open"
-                                    local b2
-                                    local KNOB1 = a:FindFirstChild("Knob1")
-                                    local KNOB2 = a:FindFirstChild("Knob2")
-                                    local KNOB1pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - KNOB1.Position).Magnitude
-                                    local KNOB2pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - KNOB2.Position).Magnitude
-                                    b2 = (KNOB1pos < KNOB2pos) and KNOB1 or KNOB2
-                                    a:FindFirstChild("Events"):FindFirstChild("Tooggle"):FireServer(b1, b2)
-                             else
-                                    for _, a in pairs(Folder_Map.Doors:GetChildren()) do
-                                          if me.Character and me.Character:FindFirstChild("HumanoidRootPart") and (me.Character:FindFirstChild("HumanoidRootPart").Position - a:FindFirstChild("DoorBase").Position).Magnitude <= 20 then
-                                                local opened = a:FindFirstChild("Values"):FindFirstChild("Open")
-                                                if opened and opened.Value == false then
-                                                      local a1 = "Open"
-                                                      local a2
-                                                      local knob1 = a:FindFirstChild("Knob1")
-                                                      local knob2 = a:FindFirstChild("Knob2")
-                                                      local knob1pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - knob1.Position).Magnitude
-                                                      local knob2pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - knob2.Position).Magnitude
-                                                      a2 = (knob1pos < knob2pos) and knob1 or knob2
-                                                      a:FindFirstChild("Events"):FindFirstChild("Toggle"):FireServer(a1, a2)
-                                                end
+            local Folder_Map = workspace:FindFirstChild("Map")
+            if not Folder_Map then return end
+            for _, a in pairs(Folder_Map.Doors:GetChildren()) do
+                  if me.Character and me.Character:FindFirstChild("HumanoidRootPart") and (me.Character:FindFirstChild("HumanoidRootPart").Position - a:FindFirstChild("DoorBase").Position).Magnitude <= 20 then
+                       if a:FindFirstChild("Values"):FindFirstChild("Locked").Value == true then
+                              a:FindFirstChild("Events"):FindFirstChild("Toggle"):FireServer("Unlock", a.Lock)
+                              local b1 = "Open"
+                              local b2
+                              local KNOB1 = a:FindFirstChild("Knob1")
+                              local KNOB2 = a:FindFirstChild("Knob2")
+                              local KNOB1pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - KNOB1.Position).Magnitude
+                              local KNOB2pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - KNOB2.Position).Magnitude
+                              b2 = (KNOB1pos < KNOB2pos) and KNOB1 or KNOB2
+                              a:FindFirstChild("Events"):FindFirstChild("Tooggle"):FireServer(b1, b2)
+                       else
+                              for _, a in pairs(Folder_Map.Doors:GetChildren()) do
+                                    if me.Character and me.Character:FindFirstChild("HumanoidRootPart") and (me.Character:FindFirstChild("HumanoidRootPart").Position - a:FindFirstChild("DoorBase").Position).Magnitude <= 20 then
+                                          local opened = a:FindFirstChild("Values"):FindFirstChild("Open")
+                                          if opened and opened.Value == false then
+                                                local a1 = "Open"
+                                                local a2
+                                                local knob1 = a:FindFirstChild("Knob1")
+                                                local knob2 = a:FindFirstChild("Knob2")
+                                                local knob1pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - knob1.Position).Magnitude
+                                                local knob2pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - knob2.Position).Magnitude
+                                                a2 = (knob1pos < knob2pos) and knob1 or knob2
+                                                a:FindFirstChild("Events"):FindFirstChild("Toggle"):FireServer(a1, a2)
                                           end
                                     end
-                             end 
-                        end
+                              end
+                       end 
                   end
-            end)
-     else
-            if remotes.open_doorsRUN then
-                  remotes.open_doorsRUN:Disconnect()
-                  remotes.open_doorsRUN = nil
             end
      end
 end
@@ -1334,14 +1392,16 @@ function fastpickupL()
                   }
             end
       end)
-
-      run.RenderStepped:Connect(function()
-            for prompt, info in pairs(proximityPrompts) do
-                  if functions.fastpickupF == true then
+      
+      if functions.fastpickupF == true then
+            remotes.fastpickupRUN = run.RenderStepped:Connect(function()
+                  for prompt, info in pairs(proximityPrompts) do
                         prompt.HoldDuration = 0
                   end
-            end
-      end)
+            end)
+      else
+            if remotes.fastpickupRUN then remotes.fastpickupRUN:Disconnect() end; remotes.fastpickupRUN = nil
+      end
 end
 
 function infstaminaL()
@@ -1412,7 +1472,90 @@ function nofalldamageL()
       end
 end
 
-run.RenderStepped:Connect(function()
+function RagebotL()
+      local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+      local function RandomString(length)
+            local res = ""
+            for i = 1, length do
+                  res = res .. string.char(math.random(97, 122))
+            end
+            return res
+      end
+
+      local function GetClosestEnemy()
+            local closestEnemy = nil
+            local shortestDistance = 100
+
+            for _, player in pairs(plrs:GetPlayers()) do
+                  if player ~= me and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                        local enemyPos = player.Character.HumanoidRootPart.Position
+                        local distance = (enemyPos - me.Character.HumanoidRootPart.Position).Magnitude
+
+                        if distance < shortestDistance then
+                              shortestDistance = distance
+                              closestEnemy = player
+                        end
+                  end
+            end
+
+            return closestEnemy
+      end
+
+      local function Shoot(target)
+            if not target or not target.Character then return end
+            local humanoidRootPart = target.Character:FindFirstChild("Head")
+            if not humanoidRootPart then return end
+
+            local hitPosition = humanoidRootPart.Position
+            local hitDirection = (hitPosition - camera.CFrame.Position).unit
+            local randomKey = RandomString(30)..0
+            local tool = me.Character:FindFirstChildOfClass("Tool")
+
+            ReplicatedStorage.Events.GNX_S:FireServer(
+                  tick(), 
+                  randomKey, 
+                  tool, 
+                  "FDS9I83", 
+                  camera.CFrame.Position, 
+                  {hitDirection}, 
+                  false
+            )
+
+            task.delay(0.0001, function()
+                  ReplicatedStorage.Events.ZFKLF_H:FireServer(
+                        "🍯", 
+                        tool, 
+                        randomKey, 
+                        1, 
+                        humanoidRootPart, 
+                        hitPosition, 
+                        hitDirection, 
+                        nil, 
+                        nil
+                  )
+            end)
+      end
+
+      local function RageBotLoop()
+            while functions.RagebotF do
+                  local target = GetClosestEnemy()
+                  if target and target.Character and target.Character:FindFirstChildOfClass("Humanoid") and not target.Character:FindFirstChildOfClass("ForceField") and target.Character:FindFirstChildOfClass("Humanoid").Health > 15 then
+                        Shoot(target)
+                  end
+                  task.wait(0.005)
+            end
+      end
+      RageBotLoop()
+end
+
+--[[function EspL()
+      local ToolsFolder = workspace:FindFirstChild("Filter").ToolSpawns
+      local SafeFolder = workspace:FindFirstChild("Map").BredMakurz
+      local ScapFolder = workspace:FindFirstChild("Filter").SpawnedPiles
+end]]
+
+function Update()
       for i, a in pairs(INDEX) do
             if a.func[a.name] == false then
                   Animate(a.button, false, a.section)
@@ -1427,9 +1570,9 @@ run.RenderStepped:Connect(function()
                   a.button.Visible = true
             end
       end
-end)
+end
 
-function SkinsL()
+--[[function SkinsL()
       run.RenderStepped:Connect(function()
             local char = me.Character or me.CharacterAdded:Wait()
             if not char then return end
@@ -1463,7 +1606,7 @@ function SkinsL()
                   end
             end
       end)
-end
+end]]
 
 function meleeauraL()
       local plrs = game:GetService("Players")
@@ -1540,24 +1683,22 @@ end
 
 function instantreloadL()
       local gunR_remote = game:GetService("ReplicatedStorage").Events.GNX_R
-      run.RenderStepped:Connect(function()
-            if functions.instant_reloadF then
-                  local tool = me.Character:FindFirstChildOfClass("Tool")
-                  if tool then
-                        if tool:FindFirstChild("IsGun") then
-                              gunR_remote:FireServer(tick(), "KLWE89U0", tool);
-                              gunR_remote:FireServer(tick(), "KLWE89U0", tool);
-                        end
-                  else
-                        return
+      if functions.instant_reloadF then
+            local tool = me.Character:FindFirstChildOfClass("Tool")
+            if tool then
+                  if tool:FindFirstChild("IsGun") then
+                        gunR_remote:FireServer(tick(), "KLWE89U0", tool);
+                        gunR_remote:FireServer(tick(), "KLWE89U0", tool);
                   end
+            else
+                  return
             end
-      end)
+      end
 end
 
-function infpepperL(value)
+function infpepperL()
       function pepper(obj)
-            if value == true then
+            if functions.infpepperF == true then
                   obj:FindFirstChild("Ammo").MinValue = 100
                   obj:FindFirstChild("Ammo").Value = 100
             else
@@ -1565,14 +1706,34 @@ function infpepperL(value)
             end
       end
       
-      run.RenderStepped:Connect(function()
-            local Pepper = me.Backpack:FindFirstChild("Pepper-spray")
-            if Pepper then
-                  pepper(Pepper)
+      local char = me.Character
+      if char then
+            local tool = char:FindFirstChildOfClass("Tool")
+            if tool and tool.Name == "Pepper-spray" then
+                  pepper(tool)
             else
-                  return
+                  char.ChildAdded:Connect(function(obj)
+                        if obj:IsA("Tool") and obj.Name == "Pepper-spray" then
+                              pepper(obj)
+                        end
+                  end)
             end
-      end)
+      else
+            me.CharacterAdded:Connect(function(character)
+                  if character then
+                        local tool = character:FindFirstChildOfClass("Tool")
+                        if tool and tool.Name == "Pepper-spray" then
+                              pepper(tool)
+                        else
+                              character.ChildAdded:Connect(function(obj)
+                                    if obj:IsA("Tool") and obj.Name == "Pepper-spray" then
+                                          pepper(obj)
+                                    end
+                              end)
+                        end
+                  end
+            end)
+      end
 end
 
 function glassarmsL(value)
@@ -1620,50 +1781,6 @@ function lockpickL()
                   lockpick(gui)
             end
       end)
-end
-
-function highlightL()
-      local function isPlayerVisible(player)
-            if player == plrs.LocalPlayer then return false end
-
-            local character = player.Character
-            if character and character:FindFirstChild("HumanoidRootPart") then
-                  local _, onScreen = camera:WorldToViewportPoint(character.HumanoidRootPart.Position)
-                  return onScreen
-            end
-
-            return false
-      end
-
-      local function updateHighlights()
-            for _, player in pairs(plrs:GetPlayers()) do
-                  local character = player.Character
-                  if character then
-                        local highlight = character:FindFirstChildOfClass("Highlight")
-                        if functions.EspF then
-                              if isPlayerVisible(player) then
-                                    if not highlight then
-                                          highlight = Instance.new("Highlight")
-                                          highlight.Parent = character
-                                          highlight.FillTransparency = 1
-                                    end
-                              else
-                                    if highlight then
-                                          highlight:Destroy()
-                                    end
-                              end
-                        else
-                              if highlight then
-                                    highlight:Destroy()
-                              end
-                        end
-                  end
-            end
-      end
-
-      while run.Heartbeat:Wait() do
-            updateHighlights()
-      end
 end
 
 function aimbotL()
@@ -1771,7 +1888,7 @@ function atmL()
       end)
 end
 
-function nobarriersL(value)
+--[[function nobarriersL(value)
       function disableTouchAndQuery(part)
             if part:IsA("BasePart") then
                   part.CanTouch = value
@@ -1810,7 +1927,7 @@ function nobarriersL(value)
       end
       findAndDisableParts()
       findAndDisableParts2()
-end
+end]]
 
 local stroke = 1
 function ConsoleText(text, typeF)
@@ -1852,7 +1969,7 @@ function ConsoleText(text, typeF)
 end
 
 Commands.cmds()
-ConsoleText("93% functions working, wait new update.", "text")
+ConsoleText("[Version 1.0]", "text")
 
 ocmenukeybindLoad.MouseEnter:Connect(function()
       remotes.OCmenukeybind = true
@@ -1914,12 +2031,12 @@ function update(input)
             startPos.Y.Offset + delta.Y
       )
 
-      local anim1 = tween:Create(dragg, TweenInfo.new(0), {Position = newPosition})
+      local anim1 = tween:Create(dragg, TweenInfo.new(0.3), {Position = newPosition})
       anim1:Play()
 end
 
 dragg.InputBegan:Connect(function(input)
-      if input.UserInputType == Enum.UserInputType.MouseButton1 then
+      if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
             startPos = dragg.Position
@@ -1933,7 +2050,7 @@ dragg.InputBegan:Connect(function(input)
 end)
 
 dragg.InputChanged:Connect(function(input)
-      if input.UserInputType == Enum.UserInputType.MouseMovement then
+      if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             dragInput = input
       end
 end)
@@ -1950,6 +2067,41 @@ input.InputBegan:Connect(function(key)
                   dragg.Visible = false
             else
                   dragg.Visible = true
+            end
+      end
+end)
+
+if OCmenubutton ~= nil then
+      OCmenubutton.MouseButton1Click:Connect(function()
+            if dragg.Visible == true then
+                  dragg.Visible = false
+            else
+                  dragg.Visible = true
+            end
+      end)
+end
+
+run.Heartbeat:Connect(function(dt)
+      timeSinceLastAdd = timeSinceLastAdd + dt
+      if timeSinceLastAdd >= addInterval then
+            timeSinceLastAdd = timeSinceLastAdd - addInterval
+            ADD(function()
+                  Update()
+            end)
+            ADD(function()
+                  instantreloadL()
+            end)
+            ADD(function()
+                  Open_doorsL()
+            end)
+      end
+      local maxTasksPerFrame = 10
+      for i = 1, maxTasksPerFrame do
+            local taskFunction = table.remove(LoadedFunctions, 1)
+            if taskFunction then
+                  local success, err = pcall(taskFunction)
+            else
+                  break
             end
       end
 end)
