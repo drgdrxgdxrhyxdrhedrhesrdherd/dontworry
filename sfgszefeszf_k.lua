@@ -6,7 +6,7 @@ local input = game:GetService("UserInputService")
 local runn
 local device = ""
 
-local link = "https://ify.ac/1YEI"
+local link = "https://ify.ac/1Yhw"
 
 local adminkey = "sosal?"
 local KEY = "u992dc"
