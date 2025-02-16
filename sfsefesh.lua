@@ -114,7 +114,6 @@ local remotes = {
       infstamina = nil;
       aimbot_circle = nil,
       aimbot_circlepos = nil,
-      fastpickupRUN = nil,
       Speed_RUN = nil,
 }
 
@@ -1394,13 +1393,12 @@ function fastpickupL()
       end)
 
       if functions.fastpickupF == true then
-            remotes.fastpickupRUN = run.RenderStepped:Connect(function()
+            while functions.fastpickupF do
                   for prompt, info in pairs(proximityPrompts) do
                         prompt.HoldDuration = 0
                   end
-            end)
-      else
-            if remotes.fastpickupRUN then remotes.fastpickupRUN:Disconnect() end; remotes.fastpickupRUN = nil
+                  run.RenderStepped:Wait()
+            end
       end
 end
 
