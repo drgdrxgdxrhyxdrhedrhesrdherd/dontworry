@@ -14,9 +14,6 @@ local status = ""
 
 local WhiteList = {}
 
-local addInterval = 0.0001
-local timeSinceLastAdd = 0
-
 local FOLDER = {
       Function_Guns = false,
       Function_Melees = false,
