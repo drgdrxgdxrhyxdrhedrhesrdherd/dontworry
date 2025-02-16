@@ -1442,6 +1442,7 @@ function infstaminaL()
                         end)
                   else
                         ConsoleText("Patched or your exploit not support.", "error"); functions.infstaminaF = false
+                        Animate(infstaminaTurn, false, false)
                   end
             end
       else
