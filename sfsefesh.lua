@@ -14,7 +14,7 @@ local status = ""
 
 local WhiteList = {}
 
-local addInterval = 0.000001
+local addInterval = 0.0001
 local timeSinceLastAdd = 0
 
 local FOLDER = {
@@ -45,7 +45,7 @@ local cmds = {"leave", "reset", "clear", "close", "cmds"}
 local functions = {
       FullbrightF = false,
       AutoOpenDoorsF = false,
-      nobarriersF = nil,
+      nobarriersF = false,
       fastpickupF = false,
       FlyF = nil,
       infstaminaF = false,
@@ -77,15 +77,15 @@ local SectionSettings = {
             CheckDist = nil
       },
       AimBot = {
-          Draw = nil,
-          DrawSize = 50,
-          DrawColor = Color3.new(1, 0, 0),
-          TargetPart = "Head",
-          CheckWall = nil,
-          CheckTeam = nil,
-          CheckWhiteList = nil,
-          CheckDistance = nil,
-          Velocity = nil
+            Draw = nil,
+            DrawSize = 50,
+            DrawColor = Color3.new(1, 0, 0),
+            TargetPart = "Head",
+            CheckWall = nil,
+            CheckTeam = nil,
+            CheckWhiteList = nil,
+            CheckDistance = nil,
+            Velocity = nil
       },
       MeleeAura = {
             ShowAnim = nil,
@@ -112,7 +112,7 @@ local SectionSettings = {
 }
 
 local remotes = {
-      OCmenukeybind = false;
+      OCmenukeybind = nil;
       fov_connection = nil;
       infstamina = nil;
       aimbot_circle = nil,
@@ -151,12 +151,6 @@ function Animate(Button, val, section)
       end
 end
 
-local LoadedFunctions = {}
-
-function ADD(func)
-      table.insert(LoadedFunctions, func)
-end
-
 wait(1)
 local MouseCheck = input.MouseEnabled
 if MouseCheck then status = "PC" else status = "mobile" end
@@ -186,11 +180,11 @@ if status == "mobile" then
       OCmenubutton.Image = "rbxassetid://83501732181441"
       OCmenubutton.ImageColor3 = Color3.new(1, 1, 1)
       OCmenubutton.Visible = true
-      
+
       local uicocmenubutton = Instance.new("UICorner")
       uicocmenubutton.Parent = OCmenubutton
       uicocmenubutton.CornerRadius = UDim.new(8, 8)
-      
+
       local uisocmenubutton = Instance.new("UIStroke")
       uisocmenubutton.Parent = OCmenubutton
       uisocmenubutton.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
@@ -359,7 +353,7 @@ Menus.Name = "Menus"
 function Library()
       local Tabs = {}
       local Functions = {}
-      
+
       function Tabs:MakeTab(Name)
             local TabButton = Instance.new("TextButton")
             TabButton.Parent = list
@@ -370,11 +364,11 @@ function Library()
             TabButton.TextScaled = true
             TabButton.Text = Name
             TabButton.Visible = true
-            
+
             local uictabbutton = Instance.new("UICorner")
             uictabbutton.Parent = TabButton
             uictabbutton.CornerRadius = UDim.new(0, 25)
-            
+
             local TabFrame = Instance.new("Frame")
             TabFrame.Parent = Menus
             TabFrame.Name = Name
@@ -382,7 +376,7 @@ function Library()
             TabFrame.Position = UDim2.new(0.209, 0, 0.01, 0)
             TabFrame.Size = UDim2.new(0, 774, 0, 598)
             TabFrame.Visible = false
-            
+
             TabButton.MouseButton1Click:Connect(function()
                   for _, a in pairs(Menus:GetChildren()) do
                         a.Visible = false
@@ -391,7 +385,7 @@ function Library()
             end)
             return TabFrame
       end
-      
+
       function Tabs:MakeScrollFrame(Parent)
             local ScrollFrame = Instance.new("ScrollingFrame")
             ScrollFrame.Parent = Parent
@@ -404,7 +398,7 @@ function Library()
             ScrollFrame.Visible = true
             return ScrollFrame
       end
-      
+
       function Functions:MakeTextButton(Parent, Name, Text, Position, TYPE, TYPENAME, func)
             local ButtonText = Instance.new("TextLabel")
             ButtonText.Parent = Parent
@@ -416,11 +410,11 @@ function Library()
             ButtonText.TextScaled = true
             ButtonText.Text = Text
             ButtonText.Visible = true
-            
+
             local uicbuttontext = Instance.new("UICorner")
             uicbuttontext.Parent = ButtonText
             uicbuttontext.CornerRadius = UDim.new(0, 8)
-            
+
             local ButtonTextControl = Instance.new("Frame")
             ButtonTextControl.Parent = ButtonText
             ButtonTextControl.Name = "Control"
@@ -428,18 +422,18 @@ function Library()
             ButtonTextControl.Position = UDim2.new(1.129, 0, 0, 0)
             ButtonTextControl.Size = UDim2.new(0, 81, 0, 35)
             ButtonTextControl.Visible = true
-            
+
             local uicbuttontextcontrol = Instance.new("UICorner")
             uicbuttontextcontrol.Parent = ButtonTextControl
             uicbuttontextcontrol.CornerRadius = UDim.new(8, 8)
-            
+
             local uisbuttontextcontrol = Instance.new("UIStroke")
             uisbuttontextcontrol.Parent = ButtonTextControl
             uisbuttontextcontrol.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
             uisbuttontextcontrol.Color = Color3.new(1, 1, 1)
             uisbuttontextcontrol.LineJoinMode = Enum.LineJoinMode.Round
             uisbuttontextcontrol.Thickness = 1
-            
+
             local TextButton = Instance.new("TextButton")
             TextButton.Parent = ButtonTextControl
             TextButton.Name = "turn"
@@ -448,23 +442,25 @@ function Library()
             TextButton.Size = UDim2.new(0, 30, 0, 30)
             TextButton.Text = ""
             TextButton.Visible = true
-            
+
             local uictextbutton = Instance.new("UICorner")
             uictextbutton.Parent = TextButton
             uictextbutton.CornerRadius = UDim.new(8, 8)
-            
+
             local uistextbutton = Instance.new("UIStroke")
             uistextbutton.Parent = TextButton
             uistextbutton.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
             uistextbutton.Color = Color3.new(1, 1, 1)
             uistextbutton.LineJoinMode = Enum.LineJoinMode.Round
             uistextbutton.Thickness = 1
-            
+
             TextButton.MouseButton1Click:Connect(function()
                   if TYPE[TYPENAME] == true then
                         TYPE[TYPENAME] = false
+                        Animate(TextButton, TYPE[TYPENAME], false)
                   elseif TYPE[TYPENAME] == false then
                         TYPE[TYPENAME] = true
+                        Animate(TextButton, TYPE[TYPENAME], false)
                   elseif TYPE[TYPENAME] == nil then
                         ConsoleText("This function is disabled.", "text")
                   end
@@ -472,10 +468,10 @@ function Library()
                         func()
                   end
             end)
-            
+
             return TextButton
       end
-      
+
       function Functions:MakeSlider(Parent, Name, Text, Position, minimal, maximal, func)
             local SliderText = Instance.new("TextLabel")
             SliderText.Parent= Parent
@@ -487,11 +483,11 @@ function Library()
             SliderText.TextScaled = true
             SliderText.Text = Text
             SliderText.Visible = true
-            
+
             local uicslidertext = Instance.new("UICorner")
             uicslidertext.Parent = SliderText
             uicslidertext.CornerRadius = UDim.new(0, 8)
-            
+
             local SliderControl = Instance.new("Frame")
             SliderControl.Parent = SliderText
             SliderControl.Name = "control"
@@ -499,18 +495,18 @@ function Library()
             SliderControl.Position = UDim2.new(1.151, 0, 0.099, 0)
             SliderControl.Size = UDim2.new(0, 272, 0, 25)
             SliderControl.Visible = true
-            
+
             local uicslidercontrol = Instance.new("UICorner")
             uicslidercontrol.Parent = SliderControl
             uicslidercontrol.CornerRadius = UDim.new(8, 8)
-            
+
             local uisslidercontrol = Instance.new("UIStroke")
             uisslidercontrol.Parent = SliderControl
             uisslidercontrol.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
             uisslidercontrol.Color = Color3.new(0, 0, 0)
             uisslidercontrol.LineJoinMode = Enum.LineJoinMode.Round
             uisslidercontrol.Thickness = 2.4
-            
+
             local SlideButton = Instance.new("TextButton")
             SlideButton.Parent = SliderControl
             SlideButton.Name = "slide"
@@ -519,29 +515,29 @@ function Library()
             SlideButton.Size = UDim2.new(0, 199, 0, 25)
             SlideButton.Text = ""
             SlideButton.Visible = true
-            
+
             local uicslidebutton = Instance.new("UICorner")
             uicslidebutton.Parent = SlideButton
             uicslidebutton.CornerRadius = UDim.new(8, 8)
-            
+
             local mine = 0.08 * SliderControl.AbsoluteSize.X
             local maxe = SliderControl.AbsoluteSize.X
-            
+
             local MIN = minimal
             local MAX = maximal
-            
+
             local activated = false
-            
+
             SlideButton.MouseButton1Down:Connect(function()
                   activated = true
             end)
-            
+
             input.InputEnded:Connect(function(key)
                   if key.UserInputType == Enum.UserInputType.MouseButton1 or key.UserInputType == Enum.UserInputType.Touch then
                         activated = false
                   end
             end)
-            
+
             input.InputChanged:Connect(function(key)
                   if activated and (key.UserInputType == Enum.UserInputType.MouseMovement or key.UserInputType == Enum.UserInputType.Touch) then  
                         local mousepos = input:GetMouseLocation().X
@@ -558,10 +554,10 @@ function Library()
                         func(funct)
                   end
             end)
-            
+
             return SlideButton
       end
-      
+
       function Functions:MakeSection(Parent, Position, Size)
             local Section = Instance.new("Frame")
             Section.Parent = Parent
@@ -570,11 +566,11 @@ function Library()
             Section.Position = Position
             Section.Size = Size
             Section.Visible = true
-            
+
             local uicsection = Instance.new("UICorner")
             uicsection.Parent = Section
             uicsection.CornerRadius = UDim.new(0, 5)
-            
+
             local uissection = Instance.new("UIStroke")
             uissection.Parent = Section
             uissection.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
@@ -583,7 +579,7 @@ function Library()
             uissection.Thickness = 1
             return Section
       end
-      
+
       function Functions:MakeSectionButton(Parent, Name, Text, Position, Size, TYPE, TYPENAME, FUnc)
             local SectionButton = Instance.new("TextLabel")
             SectionButton.Parent = Parent
@@ -595,11 +591,11 @@ function Library()
             SectionButton.TextScaled = true
             SectionButton.Text = Text
             SectionButton.Visible = true
-            
+
             local uicsectionbutton = Instance.new("UICorner")
             uicsectionbutton.Parent = SectionButton
             uicsectionbutton.CornerRadius = UDim.new(0, 8)
-            
+
             local SectionButtonControl = Instance.new("Frame")
             SectionButtonControl.Parent = SectionButton
             SectionButtonControl.Name = "Control"
@@ -607,18 +603,18 @@ function Library()
             SectionButtonControl.Position = UDim2.new(1.1, 0, 0, 0)
             SectionButtonControl.Size = UDim2.new(0, 70, 0, 35)
             SectionButtonControl.Visible = true
-            
+
             local uicsectionbuttoncontrol = Instance.new("UICorner")
             uicsectionbuttoncontrol.Parent = SectionButtonControl
             uicsectionbuttoncontrol.CornerRadius = UDim.new(8, 8)
-            
+
             local uissectionbuttoncontrol = Instance.new("UIStroke")
             uissectionbuttoncontrol.Parent = SectionButtonControl
             uissectionbuttoncontrol.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
             uissectionbuttoncontrol.Color = Color3.new(1, 1, 1)
             uissectionbuttoncontrol.LineJoinMode = Enum.LineJoinMode.Round
             uissectionbuttoncontrol.Thickness = 1
-            
+
             local SectionButtonTurn = Instance.new("TextButton")
             SectionButtonTurn.Parent = SectionButtonControl
             SectionButtonTurn.Name = "turn"
@@ -627,23 +623,25 @@ function Library()
             SectionButtonTurn.Size = UDim2.new(0, 30, 0, 30)
             SectionButtonTurn.Text = ""
             SectionButtonTurn.Visible = true
-            
+
             local uicsectionbuttonturn = Instance.new("UICorner")
             uicsectionbuttonturn.Parent = SectionButtonTurn
             uicsectionbuttonturn.CornerRadius = UDim.new(8, 8)
-            
+
             local uissectionbuttonturn = Instance.new("UIStroke")
             uissectionbuttonturn.Parent= SectionButtonTurn
             uissectionbuttonturn.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
             uissectionbuttonturn.Color = Color3.new(1, 1, 1)
             uissectionbuttonturn.LineJoinMode = Enum.LineJoinMode.Round
             uissectionbuttonturn.Thickness = 1
-            
+
             SectionButtonTurn.MouseButton1Click:Connect(function()
                   if TYPE[TYPENAME] == true then
                         TYPE[TYPENAME] = false
+                        Animate(SectionButtonTurn, TYPE[TYPENAME], true)
                   elseif TYPE[TYPENAME] == false then
                         TYPE[TYPENAME] = true
+                        Animate(SectionButtonTurn, TYPE[TYPENAME], true)
                   elseif TYPE[TYPENAME] == nil then
                         ConsoleText("This function is disabled.", "text")
                   end
@@ -651,10 +649,10 @@ function Library()
                         FUnc()
                   end
             end)
-            
+
             return SectionButtonTurn
       end
-      
+
       function Functions:MakeSectionCheckButton(Parent, Name, Text, Position, TYPE, TYPENAME, slider, SliderText, SliderPosition, minimal, maximal, FUNC)
             local SectionCheckText = Instance.new("TextLabel")
             SectionCheckText.Parent = Parent
@@ -666,11 +664,11 @@ function Library()
             SectionCheckText.TextScaled = true
             SectionCheckText.Text = Text
             SectionCheckText.Visible = true
-            
+
             local uicsectionchecktext = Instance.new("UICorner")
             uicsectionchecktext.Parent = SectionCheckText
             uicsectionchecktext.CornerRadius = UDim.new(0, 8)
-            
+
             local SectionCheckButton = Instance.new("TextButton")
             SectionCheckButton.Parent = SectionCheckText
             SectionCheckButton.Name = "Check"
@@ -679,18 +677,18 @@ function Library()
             SectionCheckButton.Size = UDim2.new(0, 32, 0, 32)
             SectionCheckButton.Text = ""
             SectionCheckButton.Visible = true
-            
+
             local uicsectioncheckbutton = Instance.new("UICorner")
             uicsectioncheckbutton.Parent = SectionCheckButton
             uicsectioncheckbutton.CornerRadius = UDim.new(0, 5)
-            
+
             local uissectioncheckbutton = Instance.new("UIStroke")
             uissectioncheckbutton.Parent = SectionCheckButton
             uissectioncheckbutton.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
             uissectioncheckbutton.Color = Color3.new(1, 1, 1)
             uissectioncheckbutton.LineJoinMode = Enum.LineJoinMode.Round
             uissectioncheckbutton.Thickness = 1
-            
+
             local SectionCheckImage = Instance.new("ImageLabel")
             SectionCheckImage.Parent = SectionCheckButton
             SectionCheckImage.Name = "Check"
@@ -699,17 +697,19 @@ function Library()
             SectionCheckImage.Size = UDim2.new(0, 32, 0, 32)
             SectionCheckImage.Image = "rbxassetid://6218581738"
             SectionCheckImage.Visible = false
-            
+
             SectionCheckButton.MouseButton1Click:Connect(function()
                   if TYPE[TYPENAME] == true then
                         TYPE[TYPENAME] = false
+                        SectionCheckImage.Visible = TYPE[TYPENAME]
                   elseif TYPE[TYPENAME] == false then
                         TYPE[TYPENAME] = true
+                        SectionCheckImage.Visible = TYPE[TYPENAME]
                   else
                         ConsoleText("Configuration is disabled or in dev", "text")
                   end
             end)
-            
+
             if slider  and SliderText ~= "" and SliderPosition ~= nil and minimal ~= nil and maximal ~= nil then
                   local SectionSlider = Instance.new("TextLabel")
                   SectionSlider.Parent = SectionCheckText
@@ -721,25 +721,25 @@ function Library()
                   SectionSlider.TextScaled = true
                   SectionSlider.Text = SliderText
                   SectionSlider.Visible = true
-                  
+
                   local SectionSliderControl = Instance.new("Frame")
                   SectionSliderControl.Parent = SectionSlider
                   SectionSliderControl.BackgroundColor3 = Color3.new(1, 1, 1)
                   SectionSliderControl.Position = UDim2.new(1, 0, 0.194, 0)
                   SectionSliderControl.Size = UDim2.new(0, 141, 0, 25)
                   SectionSliderControl.Visible = true
-                  
+
                   local uicsectionslidercontrol = Instance.new("UICorner")
                   uicsectionslidercontrol.Parent = SectionSliderControl
                   uicsectionslidercontrol.CornerRadius = UDim.new(8, 8)
-                  
+
                   local uissectionslidercontrol = Instance.new("UIStroke")
                   uissectionslidercontrol.Parent = SectionSliderControl
                   uissectionslidercontrol.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
                   uissectionslidercontrol.Color = Color3.new(0, 0, 0)
                   uissectionslidercontrol.LineJoinMode = Enum.LineJoinMode.Round
                   uissectionslidercontrol.Thickness = 1
-                  
+
                   local SectionSliderButton = Instance.new("TextButton")
                   SectionSliderButton.Parent = SectionSliderControl
                   SectionSliderButton.Name = "slider"
@@ -748,29 +748,29 @@ function Library()
                   SectionSliderButton.Size = UDim2.new(0, 50, 0, 25)
                   SectionSliderButton.Text = ""
                   SectionSliderButton.Visible = true
-                  
+
                   local uicsectionsliderbutton = Instance.new("UICorner")
                   uicsectionsliderbutton.Parent = SectionSliderButton
                   uicsectionsliderbutton.CornerRadius = UDim.new(8, 8)
-                  
+
                   local MINN = 0.0001 * SectionSliderButton.AbsoluteSize.X
                   local MAXX = SectionSliderButton.AbsoluteSize.X
-                  
+
                   local minim = minimal
                   local maxim = maximal
-                  
+
                   local canuse = false
-                  
+
                   SectionSliderButton.MouseButton1Down:Connect(function()
                         canuse = true
                   end)
-                  
+
                   input.InputEnded:Connect(function(key)
                         if key.UserInputType == Enum.UserInputType.MouseButton1 or key.UserInputType == Enum.UserInputType.Touch then
                               canuse = false
                         end
                   end)
-                  
+
                   input.InputChanged:Connect(function(key)
                         if canuse and (key.UserInputType == Enum.UserInputType.MouseMovement or key.UserInputType == Enum.UserInputType.Touch) then
                               local mpos = input:GetMouseLocation().X
@@ -784,7 +784,7 @@ function Library()
             end
             return SectionCheckImage
       end
-      
+
       function Functions:MakeSectionClickButton(Parent, Name, Text, Position, Size)
             local SectionClickText = Instance.new("TextLabel")
             SectionClickText.Parent = Parent
@@ -796,11 +796,11 @@ function Library()
             SectionClickText.TextScaled = true
             SectionClickText.Text = Text
             SectionClickText.Visible = true
-            
+
             local uicsectionclicktext = Instance.new("UICorner")
             uicsectionclicktext.Parent = SectionClickText
             uicsectionclicktext.CornerRadius = UDim.new(0, 8)
-            
+
             local SectionClickButton = Instance.new("ImageButton")
             SectionClickButton.Parent = SectionClickText
             SectionClickButton.BackgroundTransparency = 1
@@ -810,7 +810,7 @@ function Library()
             SectionClickButton.Visible = true
             return SectionClickButton
       end
-      
+
       function Functions:MakeColorWheelButton(Parent, Position)
             local ColorWheelButton = Instance.new("ImageButton")
             ColorWheelButton.Parent = Parent
@@ -822,7 +822,7 @@ function Library()
             ColorWheelButton.Visible = true
             return ColorWheelButton
       end
-      
+
       function Functions:MakeSectionSlider(Parent, Text, Position)
             local SliderText = Instance.new("TextLabel")
             SliderText.Parent = Parent
@@ -834,7 +834,7 @@ function Library()
             SliderText.TextScaled = true
             SliderText.Text = Text
             SliderText.Visible = true
-            
+
             local SliderControl = Instance.new("Frame")
             SliderControl.Parent = SliderText
             SliderControl.Name = "Control"
@@ -842,18 +842,18 @@ function Library()
             SliderControl.Position = UDim2.new(1.075, 0, 0.155, 0)
             SliderControl.Size = UDim2.new(0, 141, 0, 25)
             SliderControl.Visible = true
-            
+
             local uicslidercontrol = Instance.new("UICorner")
             uicslidercontrol.Parent = SliderControl
             uicslidercontrol.CornerRadius = UDim.new(8, 8)
-            
+
             local uisslidercontrol = Instance.new("UIStroke")
             uisslidercontrol.Parent = SliderControl
             uisslidercontrol.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
             uisslidercontrol.Color = Color3.new(0, 0, 0)
             uisslidercontrol.LineJoinMode = Enum.LineJoinMode.Round
             uisslidercontrol.Thickness = 1
-            
+
             local SliderButton = Instance.new("TextButton")
             SliderButton.Parent = SliderControl
             SliderButton.Name = "slide"
@@ -862,13 +862,13 @@ function Library()
             SliderButton.Size = UDim2.new(0, 50, 0, 25)
             SliderButton.Text = ""
             SliderButton.Visible = true
-            
+
             local uicsliderbutton = Instance.new("UICorner")
             uicsliderbutton.Parent = SliderButton
             uicsliderbutton.CornerRadius = UDim.new(8, 8)
             return SliderButton
       end
-      
+
       function Functions:AddSkin(Parent, Name, Text)
             local SkinText = Instance.new("TextLabel")
             SkinText.Parent = Parent
@@ -879,11 +879,11 @@ function Library()
             SkinText.TextScaled = true
             SkinText.Text = Text
             SkinText.Visible = true
-            
+
             local uicskinstext = Instance.new("UICorner")
             uicskinstext.Parent = SkinText
             uicskinstext.CornerRadius = UDim.new(0, 8)
-            
+
             local SkinsButton = Instance.new("TextButton")
             SkinsButton.Parent = SkinText
             SkinsButton.Name = "Check"
@@ -892,18 +892,18 @@ function Library()
             SkinsButton.Size = UDim2.new(0, 40, 0, 40)
             SkinsButton.Text = ""
             SkinsButton.Visible = true
-            
+
             local uicskinsbutton = Instance.new("UICorner")
             uicskinsbutton.Parent = SkinsButton
             uicskinsbutton.CornerRadius = UDim.new(0, 5)
-            
+
             local uisskinsbutton = Instance.new("UIStroke")
             uisskinsbutton.Parent = SkinsButton
             uisskinsbutton.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
             uisskinsbutton.Color = Color3.new(1, 1, 1)
             uisskinsbutton.LineJoinMode = Enum.LineJoinMode.Round
             uisskinsbutton.Thickness = 1
-            
+
             local SkinsCheckImage = Instance.new("ImageLabel")
             SkinsCheckImage.Parent = SkinsButton
             SkinsCheckImage.Name = "check"
@@ -914,7 +914,7 @@ function Library()
             SkinsCheckImage.Visible = false
             return SkinsCheckImage
       end
-      
+
       return {Tabs = Tabs, Functions = Functions}
 end
 
@@ -945,7 +945,9 @@ end)
 local TurnOpen_doors = Functions:MakeTextButton(WorldMenu, "OpenDoors", "Auto open doors", UDim2.new(0.016, 0, 0.109, 0), functions, "AutoOpenDoorsF", function()
       Open_doorsL()
 end)
-local nobarriersTurn = Functions:MakeTextButton(WorldMenu, "nobarriers", "No barriers", UDim2.new(0.016, 0, 0.192, 0), functions, "nobarriersF")
+local nobarriersTurn = Functions:MakeTextButton(WorldMenu, "nobarriers", "No barriers", UDim2.new(0.016, 0, 0.192, 0), functions, "nobarriersF", function()
+      nobarriersL()
+end)
 local fastpickupTurn = Functions:MakeTextButton(WorldMenu, "fastpickup", "Fast pick up", UDim2.new(0.016, 0, 0.275, 0), functions, "fastpickupF", function()
       fastpickupL()
 end)
@@ -972,9 +974,7 @@ local norecoilTurn = Functions:MakeTextButton(MainScroll, "norecoil", "No recoil
 local glassarmsTurn = Functions:MakeTextButton(VisualMenu, "glassarms", "Glass arms", UDim2.new(0.53, 0, 0.019, 0), functions, "glassarmsF", function()
       glassarmsL()
 end)
-local glassarmscolor = Functions:MakeColorWheelButton(VisualMenu, UDim2.new(0.937, 0, 0.025, 0), function()
-      glassarmsL()
-end)
+local glassarmscolor = Functions:MakeColorWheelButton(VisualMenu, UDim2.new(0.937, 0, 0.025, 0))
 
 --// silent aim in section \\--
 local silentaimTurn = Functions:MakeSectionButton(SECTION1, "silentaim", "Silent aim", UDim2.new(0.03, 0, 0.022, 0), UDim2.new(0, 160, 0, 32), functions, "silentaimF")
@@ -1345,41 +1345,44 @@ function FullbrightL()
 end
 
 function Open_doorsL()
-     if functions.AutoOpenDoorsF then
-            local Folder_Map = workspace:FindFirstChild("Map")
-            if not Folder_Map then return end
-            for _, a in pairs(Folder_Map.Doors:GetChildren()) do
-                  if me.Character and me.Character:FindFirstChild("HumanoidRootPart") and (me.Character:FindFirstChild("HumanoidRootPart").Position - a:FindFirstChild("DoorBase").Position).Magnitude <= 20 then
-                       if a:FindFirstChild("Values"):FindFirstChild("Locked").Value == true then
-                              a:FindFirstChild("Events"):FindFirstChild("Toggle"):FireServer("Unlock", a.Lock)
-                              local b1 = "Open"
-                              local b2
-                              local KNOB1 = a:FindFirstChild("Knob1")
-                              local KNOB2 = a:FindFirstChild("Knob2")
-                              local KNOB1pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - KNOB1.Position).Magnitude
-                              local KNOB2pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - KNOB2.Position).Magnitude
-                              b2 = (KNOB1pos < KNOB2pos) and KNOB1 or KNOB2
-                              a:FindFirstChild("Events"):FindFirstChild("Tooggle"):FireServer(b1, b2)
-                       else
-                              for _, a in pairs(Folder_Map.Doors:GetChildren()) do
-                                    if me.Character and me.Character:FindFirstChild("HumanoidRootPart") and (me.Character:FindFirstChild("HumanoidRootPart").Position - a:FindFirstChild("DoorBase").Position).Magnitude <= 20 then
-                                          local opened = a:FindFirstChild("Values"):FindFirstChild("Open")
-                                          if opened and opened.Value == false then
-                                                local a1 = "Open"
-                                                local a2
-                                                local knob1 = a:FindFirstChild("Knob1")
-                                                local knob2 = a:FindFirstChild("Knob2")
-                                                local knob1pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - knob1.Position).Magnitude
-                                                local knob2pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - knob2.Position).Magnitude
-                                                a2 = (knob1pos < knob2pos) and knob1 or knob2
-                                                a:FindFirstChild("Events"):FindFirstChild("Toggle"):FireServer(a1, a2)
+      if functions.AutoOpenDoorsF then
+            while functions.AutoOpenDoorsF do
+                  local Folder_Map = workspace:FindFirstChild("Map")
+                  if not Folder_Map then return end
+                  for _, a in pairs(Folder_Map.Doors:GetChildren()) do
+                        if me.Character and me.Character:FindFirstChild("HumanoidRootPart") and (me.Character:FindFirstChild("HumanoidRootPart").Position - a:FindFirstChild("DoorBase").Position).Magnitude <= 30 then
+                              if a:FindFirstChild("Values"):FindFirstChild("Locked").Value == true then
+                                    a:FindFirstChild("Events"):FindFirstChild("Toggle"):FireServer("Unlock", a.Lock)
+                                    local b1 = "Open"
+                                    local b2
+                                    local KNOB1 = a:FindFirstChild("Knob1")
+                                    local KNOB2 = a:FindFirstChild("Knob2")
+                                    local KNOB1pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - KNOB1.Position).Magnitude
+                                    local KNOB2pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - KNOB2.Position).Magnitude
+                                    b2 = (KNOB1pos < KNOB2pos) and KNOB1 or KNOB2
+                                    a:FindFirstChild("Events"):FindFirstChild("Toggle"):FireServer(b1, b2)
+                              else
+                                    for _, i in pairs(Folder_Map.Doors:GetChildren()) do
+                                          if me.Character and me.Character:FindFirstChild("HumanoidRootPart") and (me.Character:FindFirstChild("HumanoidRootPart").Position - i:FindFirstChild("DoorBase").Position).Magnitude <= 20 then
+                                                local opened = i:FindFirstChild("Values"):FindFirstChild("Open")
+                                                if opened and opened.Value == false then
+                                                      local a1 = "Open"
+                                                      local a2
+                                                      local knob1 = i:FindFirstChild("Knob1")
+                                                      local knob2 = i:FindFirstChild("Knob2")
+                                                      local knob1pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - knob1.Position).Magnitude
+                                                      local knob2pos = (me.Character:FindFirstChild("HumanoidRootPart").Position - knob2.Position).Magnitude
+                                                      a2 = (knob1pos < knob2pos) and knob1 or knob2
+                                                      i:FindFirstChild("Events"):FindFirstChild("Toggle"):FireServer(a1, a2)
+                                                end
                                           end
                                     end
-                              end
-                       end 
+                              end 
+                        end
                   end
+                  run.RenderStepped:Wait()
             end
-     end
+      end
 end
 
 function fastpickupL()
@@ -1392,7 +1395,7 @@ function fastpickupL()
                   }
             end
       end)
-      
+
       if functions.fastpickupF == true then
             remotes.fastpickupRUN = run.RenderStepped:Connect(function()
                   for prompt, info in pairs(proximityPrompts) do
@@ -1450,31 +1453,36 @@ function infstaminaL()
 end
 
 function nofalldamageL()
-      if functions.nofalldamageF == true then
-            local mychar = me.Character
-            if mychar then
+      local folder = workspace:FindFirstChild("Characters")
+      local mychar = me.Character
+      if mychar then
+            if functions.nofalldamageF then
                   local ff = Instance.new("ForceField")
                   ff.Parent = mychar
                   ff.Visible = false
-            else
-                  me.CharacterAdded:Connect(function(char)
-                        if char and functions.nofalldamageF == true then
-                              local ff = Instance.new("ForceField")
-                              ff.Parent = char
-                              ff.Visible = false
-                        end
-                  end)
             end
-      else
-            if me.Character and me.Character:FindFirstChildOfClass("ForceField") then
-                  me.Character:FindFirstChildOfClass("ForceField"):Destroy()
+      end
+      me.CharacterAdded:Connect(function(char)
+            repeat wait() until char and char.Parent
+            if functions.nofalldamageF then
+                  local ff = Instance.new("ForceField")
+                  ff.Parent = char
+                  ff.Visible = false
+            end
+      end)
+      if functions.nofalldamageF == false then
+            local mychar = me.Character
+            if mychar then
+                  for _, a in pairs(mychar:GetChildren()) do
+                        if a:IsA("ForceField") and a.Visible == false then
+                              a:Destroy()
+                        end
+                  end
             end
       end
 end
 
 function RagebotL()
-      local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
       local function RandomString(length)
             local res = ""
             for i = 1, length do
@@ -1488,12 +1496,11 @@ function RagebotL()
             local shortestDistance = 100
 
             for _, player in pairs(plrs:GetPlayers()) do
-                  if player ~= me and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                  if player ~= me and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChildOfClass("Humanoid").Health > 15 and not player.Character:FindFirstChildOfClass("ForceField") then
                         local enemyPos = player.Character.HumanoidRootPart.Position
                         local distance = (enemyPos - me.Character.HumanoidRootPart.Position).Magnitude
 
                         if distance < shortestDistance then
-                              shortestDistance = distance
                               closestEnemy = player
                         end
                   end
@@ -1512,7 +1519,7 @@ function RagebotL()
             local randomKey = RandomString(30)..0
             local tool = me.Character:FindFirstChildOfClass("Tool")
 
-            ReplicatedStorage.Events.GNX_S:FireServer(
+            game:GetService("ReplicatedStorage").Events.GNX_S:FireServer(
                   tick(), 
                   randomKey, 
                   tool, 
@@ -1522,8 +1529,8 @@ function RagebotL()
                   false
             )
 
-            task.delay(0.0001, function()
-                  ReplicatedStorage.Events.ZFKLF_H:FireServer(
+            task.delay(0.00001, function()
+                  game:GetService("ReplicatedStorage").Events.ZFKLF_H:FireServer(
                         "🍯", 
                         tool, 
                         randomKey, 
@@ -1540,10 +1547,10 @@ function RagebotL()
       local function RageBotLoop()
             while functions.RagebotF do
                   local target = GetClosestEnemy()
-                  if target and target.Character and target.Character:FindFirstChildOfClass("Humanoid") and not target.Character:FindFirstChildOfClass("ForceField") and target.Character:FindFirstChildOfClass("Humanoid").Health > 15 then
+                  if target then
                         Shoot(target)
                   end
-                  task.wait(0.005)
+                  run.RenderStepped:Wait()
             end
       end
       RageBotLoop()
@@ -1555,7 +1562,7 @@ end
       local ScapFolder = workspace:FindFirstChild("Filter").SpawnedPiles
 end]]
 
-function Update()
+function UpdateButtons()
       for i, a in pairs(INDEX) do
             if a.func[a.name] == false then
                   Animate(a.button, false, a.section)
@@ -1657,7 +1664,7 @@ function meleeauraL()
             end
       end
 
-      run.RenderStepped:Connect(function()
+      while functions.meleeauraF do
             local mychar = me.Character or me.CharacterAdded:Wait()
             if mychar then
                   local myhrp = mychar:FindFirstChild("HumanoidRootPart")
@@ -1669,7 +1676,7 @@ function meleeauraL()
                                           local hrp = char:FindFirstChild("HumanoidRootPart")
                                           if hrp then
                                                 local distance = (myhrp.Position - hrp.Position).Magnitude
-                                                if distance < maxdist and a.Character:FindFirstChildOfClass("Humanoid").Health > 15 and not char:FindFirstChildOfClass("ForceField") and functions.meleeauraF then -- искать близжайшего игрока
+                                                if distance < maxdist and a.Character:FindFirstChildOfClass("Humanoid").Health > 15 and not char:FindFirstChildOfClass("ForceField") then -- искать близжайшего игрока
                                                       Attack(char)
                                                 end
                                           end
@@ -1678,20 +1685,81 @@ function meleeauraL()
                         end
                   end
             end
-      end)
+            run.RenderStepped:Wait()
+      end
 end
 
 function instantreloadL()
       local gunR_remote = game:GetService("ReplicatedStorage").Events.GNX_R
       if functions.instant_reloadF then
-            local tool = me.Character:FindFirstChildOfClass("Tool")
-            if tool then
-                  if tool:FindFirstChild("IsGun") then
-                        gunR_remote:FireServer(tick(), "KLWE89U0", tool);
-                        gunR_remote:FireServer(tick(), "KLWE89U0", tool);
+            local charme = me.Character
+            if charme then
+                  local tool = charme:FindFirstChildOfClass("Tool")
+                  if tool and tool:FindFirstChild("IsGun") then
+                        local value = tool:FindFirstChild("Values"):FindFirstChild("SERVER_Ammo")
+                        local value2 = tool:FindFirstChild("Values"):FindFirstChild("SERVER_StoredAmmo")
+                        value2:GetPropertyChangedSignal("Value"):Connect(function()
+                              if functions.instant_reloadF then
+                                    gunR_remote:FireServer(tick(), "KLWE89U0", tool);
+                              end
+                        end)
+                        if value2.Value ~= 0 then
+                              if functions.instant_reloadF then
+                                    gunR_remote:FireServer(tick(), "KLWE89U0", tool);
+                              end
+                        end
+                        value:GetPropertyChangedSignal("Value"):Connect(function()
+                              if functions.instant_reloadF and value2.Value ~= 0 then
+                                    gunR_remote:FireServer(tick(), "KLWE89U0", tool);
+                              end
+                        end)
+                  else
+                        charme.ChildAdded:Connect(function(obj)
+                              if obj:IsA("Tool") and obj:FindFirstChild("IsGun") then
+                                    local value = obj:FindFirstChild("Values"):FindFirstChild("SERVER_Ammo")
+                                    local value2 = obj:FindFirstChild("Values"):FindFirstChild("SERVER_StoredAmmo")
+                                    value2:GetPropertyChangedSignal("Value"):Connect(function()
+                                          if functions.instant_reloadF then
+                                                gunR_remote:FireServer(tick(), "KLWE89U0", obj);
+                                          end
+                                    end)
+                                    if value2.Value ~= 0 then
+                                          if functions.instant_reloadF then
+                                                gunR_remote:FireServer(tick(), "KLWE89U0", obj);
+                                          end
+                                    end
+                                    value:GetPropertyChangedSignal("Value"):Connect(function()
+                                          if functions.instant_reloadF and value2.Value ~= 0 then
+                                                gunR_remote:FireServer(tick(), "KLWE89U0", obj);
+                                          end
+                                    end)
+                              end
+                        end)
                   end
-            else
-                  return
+                  me.CharacterAdded:Connect(function(charr)
+                        repeat wait() until charr and charr.Parent
+                        charr.ChildAdded:Connect(function(obj)
+                              if obj:IsA("Tool") and obj:FindFirstChild("IsGun") then
+                                    local value = obj:FindFirstChild("Values"):FindFirstChild("SERVER_Ammo")
+                                    local value2 = obj:FindFirstChild("Values"):FindFirstChild("SERVER_StoredAmmo")
+                                    value2:GetPropertyChangedSignal("Value"):Connect(function()
+                                          if functions.instant_reloadF then
+                                                gunR_remote:FireServer(tick(), "KLWE89U0", obj);
+                                          end
+                                    end)
+                                    if value2.Value ~= 0 then
+                                          if functions.instant_reloadF then
+                                                gunR_remote:FireServer(tick(), "KLWE89U0", obj);
+                                          end
+                                    end
+                                    value:GetPropertyChangedSignal("Value"):Connect(function()
+                                          if functions.instant_reloadF and value2.Value ~= 0 then
+                                                gunR_remote:FireServer(tick(), "KLWE89U0", obj);
+                                          end
+                                    end)
+                              end
+                        end)
+                  end)
             end
       end
 end
@@ -1705,7 +1773,7 @@ function infpepperL()
                   obj:FindFirstChild("Ammo").MinValue = 0
             end
       end
-      
+
       local char = me.Character
       if char then
             local tool = char:FindFirstChildOfClass("Tool")
@@ -1736,17 +1804,19 @@ function infpepperL()
       end
 end
 
-function glassarmsL(value)
+function glassarmsL()
       local viewfolder = camera:WaitForChild("ViewModel")
-      if value == true then
+      if functions.glassarmsF == true then
             viewfolder["Left Arm"].Material = Enum.Material.ForceField
             viewfolder["Right Arm"].Material = Enum.Material.ForceField
       else
             viewfolder["Left Arm"].Material = Enum.Material.Plastic
             viewfolder["Right Arm"].Material = Enum.Material.Plastic
       end
-      me.CharacterAdded:Connect(function()
-            if value == true then
+      me.CharacterAdded:Connect(function(char)
+            repeat wait() until char and char.Parent
+            local viewfolder = camera:WaitForChild("ViewModel")
+            if functions.glassarmsF == true then
                   viewfolder["Left Arm"].Material = Enum.Material.ForceField
                   viewfolder["Right Arm"].Material = Enum.Material.ForceField
             else
@@ -1775,7 +1845,7 @@ function lockpickL()
                   end
             end
       end
-      
+
       me.PlayerGui.ChildAdded:Connect(function(gui)
             if gui:IsA("ScreenGui") and gui.Name == "LockpickGUI" then
                   lockpick(gui)
@@ -1822,7 +1892,7 @@ function aimbotL()
             remotes.aimbot_circlepos = run.RenderStepped:Connect(function()
                   remotes.aimbot_circle.Position = Vector2.new(input:GetMouseLocation().X, input:GetMouseLocation().Y)
             end)
-            
+
             input.InputBegan:Connect(function(key)
                   if not input:GetFocusedTextBox() then
                         if key.UserInputType == Enum.UserInputType.MouseButton2 then
@@ -1888,46 +1958,13 @@ function atmL()
       end)
 end
 
---[[function nobarriersL(value)
-      function disableTouchAndQuery(part)
-            if part:IsA("BasePart") then
-                  part.CanTouch = value
-                  part.CanQuery = value
+function nobarriersL()
+      for _, a in pairs(workspace.Filter.Parts["F_Parts"]:GetDescendants()) do
+            if a:IsA("Part") or a:IsA("MeshPart") then
+                  a.CanTouch = not a.CanTouch
             end
       end
-
-      function findAndDisableParts()
-            partNames = {"BarbedWire", "RG_Part", "Spike"}
-
-            for _, partName in ipairs(partNames) do
-                  for _, part in pairs(game.Workspace:GetDescendants()) do
-                        if part.Name == partName then
-                              disableTouchAndQuery(part)
-                        end
-                  end
-            end
-      end
-      function disableTouchAndQuery2(part)
-            if part:IsA("BasePart") then
-                  part.CanTouch = value
-                  part.CanQuery = value
-            end
-      end
-
-      function findAndDisableParts2()
-            partNames2 = {"FirePart", "Grinder"}
-
-            for _, partName in ipairs(partNames2) do
-                  for _, part in pairs(game.Workspace:GetDescendants()) do
-                        if part.Name == partName then
-                              disableTouchAndQuery2(part)
-                        end
-                  end
-            end
-      end
-      findAndDisableParts()
-      findAndDisableParts2()
-end]]
+end
 
 local stroke = 1
 function ConsoleText(text, typeF)
@@ -1935,12 +1972,12 @@ function ConsoleText(text, typeF)
             consoletext.Text = ""
             stroke = 1
       end
-      
+
       local strokeColor = '<font color="rgb(255, 255, 255)">'..stroke..".  "..'</font>'
       local errorColor = '<font color="rgb(255, 0, 0)">'..text..'</font>'
       local succesColor = '<font color="rgb(0, 255, 0)">'..text..'</font>'
       local textColor = '<font color="rgb(255, 255, 255)">'..text..'</font>'
-      
+
       if consoletext.Text == "" and typeF == "error" then
             consoletext.Text = strokeColor..errorColor
             stroke += 1
@@ -1969,7 +2006,7 @@ function ConsoleText(text, typeF)
 end
 
 Commands.cmds()
-ConsoleText("[Version 1.0]", "text")
+ConsoleText("[Version 1.01]", "text")
 
 ocmenukeybindLoad.MouseEnter:Connect(function()
       remotes.OCmenukeybind = true
@@ -2081,27 +2118,19 @@ if OCmenubutton ~= nil then
       end)
 end
 
-run.Heartbeat:Connect(function(dt)
-      timeSinceLastAdd = timeSinceLastAdd + dt
-      if timeSinceLastAdd >= addInterval then
-            timeSinceLastAdd = timeSinceLastAdd - addInterval
-            ADD(function()
-                  Update()
-            end)
-            ADD(function()
-                  instantreloadL()
-            end)
-            ADD(function()
-                  Open_doorsL()
-            end)
-      end
-      local maxTasksPerFrame = 10
-      for i = 1, maxTasksPerFrame do
-            local taskFunction = table.remove(LoadedFunctions, 1)
-            if taskFunction then
-                  local success, err = pcall(taskFunction)
-            else
-                  break
-            end
-      end
-end)
+function UpdateFunctions()
+      FullbrightL()
+      Open_doorsL()
+      nobarriersL()
+      fastpickupL()
+      infstaminaL()
+      nofalldamageL()
+      aimbotL()
+      meleeauraL()
+      RagebotL()
+      instantreloadL()
+      infpepperL()
+      glassarmsL()
+      lockpickL()
+      atmL()
+end
