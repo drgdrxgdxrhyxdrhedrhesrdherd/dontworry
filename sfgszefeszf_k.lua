@@ -8,7 +8,7 @@ local device = ""
 
 local link = "https://ify.ac/1Yhw"
 
-local adminkey = "StupidFuckingNigger"
+local adminkey = "nigga"
 local KEY = "bigdick"
 
 local GUI = Instance.new("ScreenGui")
